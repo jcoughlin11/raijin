@@ -8,6 +8,10 @@ from raijin.utilities.register import register_object
 #                  BaseAgent
 # ============================================
 class BaseAgent(ABC):
+    """
+    The agent is responsible for choosing actions and interacting
+    with the game environment.
+    """
     # -----
     # subclass hook
     # -----
