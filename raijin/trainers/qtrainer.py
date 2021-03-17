@@ -12,17 +12,17 @@ class QTrainer(BaseTrainer):
     # -----
     # constructor
     # -----
-    def __init__(self, agent, lossFunctions, memory, nets, optimizers, params, pipeline):
+    def __init__(self, agent, lossFunctions, memory, nets, optimizers, params):
         self.agent = agent
         self.loss_function = lossFunctions[0]  
         self.memory = memory
         self.nets = nets[0]
         self.optimzers = optimizers[0]
-        self.pipeline = pipeline
         self.nEpisodes = params.nEpisodes
         self.episodeLength = params.episodeLength
         self.prePopulateSteps = params.prePopulateSteps
         self.batchSize = params.batchSize
+        self.episodeOver = False
 
     # -----
     # training_step
@@ -30,6 +30,7 @@ class QTrainer(BaseTrainer):
     def training_step(self, actionChoiceType):
         experience = self.agent.step(actionChoiceType, self.net)
         self.memory.add(experience)
+        self.episodeOver = experience.done
 
     # -----
     # train
@@ -42,6 +43,9 @@ class QTrainer(BaseTrainer):
                 self.training_step("train")
                 batch = self.memory.sample(self.batchSize)
                 self.learn(batch)
+                if self.episodeOver:
+                    self.episodeOver = False
+                    break
 
     # -----
     # learn

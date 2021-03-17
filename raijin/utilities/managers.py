@@ -8,13 +8,13 @@ from raijin.utilities.register import registry
 # ============================================
 def get_trainer(params):
     env = get_env(params.env.name)
-    agent = registry[params.agent.name](params.agent)
-    memory = registry[params.memory.name](params.memory) 
     pipeline = registry[params.pipeline.name](params.pipeline)
+    agent = registry[params.agent.name](env, pipeline, params.agent)
+    memory = registry[params.memory.name](params.memory) 
     nets = get_nets(params.nets, pipeline.traceLen, env.action_space.n)
     optimizers = get_optimizers(params.optimizers, nets)
     lossFunctions = get_loss_functions(params.losses)
-    trainer = registry[params.trainer.name](agent, lossFunctions, memory, nets, optimizers, params.trainer, pipeline)
+    trainer = registry[params.trainer.name](agent, lossFunctions, memory, nets, optimizers, params.trainer)
     return trainer
 
 

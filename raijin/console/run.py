@@ -8,3 +8,4 @@ from .app import RaijinApplication
 # ============================================
 def run():
     RaijinApplication().run()
+    print("Done.")

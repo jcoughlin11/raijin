@@ -11,8 +11,9 @@ class QAgent(BaseAgent):
     # -----
     # constructor
     # -----
-    def __init__(self, env, params):
+    def __init__(self, env, pipeline, params):
         self.env = env
+        self.pipeline = pipeline
         self.epsilonStart = params.epsilonStart
         self.epsilonStop = params.epsilonStop
         self.epsilonDecayRate = params.epsilonDecayRate
@@ -23,7 +24,8 @@ class QAgent(BaseAgent):
     # reset
     # -----
     def reset(self):
-        self.state = self.env.reset()
+        frame = self.env.reset()
+        self.state = self.pipeline.process(frame, True)
 
     # -----
     # choose_action
@@ -51,6 +53,10 @@ class QAgent(BaseAgent):
     def step(self, actionChoiceType, net):
         action = self.choose_action(actionChoiceType, net)
         nextFrame, reward, done, _ = self.env.step(action)
+        nextState = self.pipeline.process(nextFrame, False)
         experience = Experience(self.state, action, reward, nextState, done)
-        self.state = nextState
+        if done:
+            self.reset()
+        else:
+            self.state = nextState
         return experience

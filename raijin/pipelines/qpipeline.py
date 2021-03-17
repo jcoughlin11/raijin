@@ -1,3 +1,5 @@
+from collections import deque
+
 import torchvision.transforms.functional as tf
 
 from .base_pipeline import BasePipeline
@@ -17,6 +19,7 @@ class QPipeline(BasePipeline):
         self.offsetWidth = params.offsetWidth
         self.cropHeight = params.cropHeight
         self.cropWidth = params.cropWidth
+        self.frameStack = deque(maxlen=self.traceLen)
 
     # -----
     # normalize_frame
@@ -69,6 +72,7 @@ class QPipeline(BasePipeline):
     # process
     # -----
     def process(self, frame, newEpisode):
+        frame = torch.from_numpy(frame)
         frame = self.normalize_frame(frame)
         frame = self.grayscale(frame)
         frame = self.crop(frame)
