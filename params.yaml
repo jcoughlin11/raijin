@@ -21,7 +21,7 @@ pipeline:
 optimizers:
     optimizer1:
         name : Adam
-        learningRate : 0.01
+        lr : 0.01
 
 losses:
     loss1:
