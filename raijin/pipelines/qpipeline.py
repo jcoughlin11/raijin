@@ -1,5 +1,6 @@
 from collections import deque
 
+import torch
 import torchvision.transforms.functional as tf
 
 from .base_pipeline import BasePipeline

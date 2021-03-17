@@ -8,8 +8,8 @@ lossRegister = {
     "BCELoss" : torch.nn.BCELoss,
     "BCEWithLogitsLoss" : torch.nn.BCEWithLogitsLoss,
     "CosineEmbeddingLoss" : torch.nn.CosineEmbeddingLoss,
-    "CrossEntropyLoss" : torch.nn.CrossEntropy,
-    "CTCLoss", torch.nn.CTCLoss,
+    "CrossEntropyLoss" : torch.nn.CrossEntropyLoss,
+    "CTCLoss": torch.nn.CTCLoss,
     "HingeEmbeddingLoss" : torch.nn.HingeEmbeddingLoss,
     "KLDivLoss" : torch.nn.KLDivLoss,
     "L1Loss" : torch.nn.L1Loss,
@@ -23,8 +23,8 @@ lossRegister = {
     "PoissonNLLLoss" : torch.nn.PoissonNLLLoss,
     "SmoothL1Loss" : torch.nn.SmoothL1Loss,
     "SoftMarginLoss" : torch.nn.SoftMarginLoss,
-    "TripleMarginLoss" : torch.nn.TripleMarginLoss,
-    "TripleMarginWithDistanceLoss" : torch.nn.TripleMarginWithDistanceLoss,
+    "TripletMarginLoss" : torch.nn.TripletMarginLoss,
+    "TripletMarginWithDistanceLoss" : torch.nn.TripletMarginWithDistanceLoss,
 }
 registry.update(lossRegister)
 

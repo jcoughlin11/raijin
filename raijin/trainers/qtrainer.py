@@ -16,12 +16,13 @@ class QTrainer(BaseTrainer):
         self.agent = agent
         self.loss_function = lossFunctions[0]  
         self.memory = memory
-        self.nets = nets[0]
-        self.optimzers = optimizers[0]
+        self.net = nets[0]
+        self.optimizer = optimizers[0]
         self.nEpisodes = params.nEpisodes
         self.episodeLength = params.episodeLength
         self.prePopulateSteps = params.prePopulateSteps
         self.batchSize = params.batchSize
+        self.discountRate = params.discountRate
         self.episodeOver = False
 
     # -----
@@ -38,6 +39,7 @@ class QTrainer(BaseTrainer):
     def train(self):
         self._pre_populate()
         for episode in range(self.nEpisodes):
+            print(f"Episode: {episode}")
             self.agent.reset()
             for episodeStep in range(self.episodeLength):
                 self.training_step("train")
@@ -60,7 +62,7 @@ class QTrainer(BaseTrainer):
         """
         states, actions, rewards, nextStates, dones = batch
         beliefs = self._get_beliefs(states, actions)
-        targets = self._get_targets()
+        targets = self._get_targets(nextStates, dones, rewards)
         loss = self.loss_function(beliefs, targets.detach())
         self.optimizer.zero_grad()
         loss.backward()
@@ -71,7 +73,7 @@ class QTrainer(BaseTrainer):
     # -----
     def _pre_populate(self):
         self.agent.reset()
-        for _ in range(self.prePopulateSteps)
+        for _ in range(self.prePopulateSteps):
             self.training_step("explore")
 
     # -----
@@ -86,8 +88,10 @@ class QTrainer(BaseTrainer):
         # simultaneously keeping the non-chosen indices untouched
         # one_hot returns a tensor with one more dimension than the input,
         # se we squeeze that out
+        # one_hot has to have a long dtype. torch.int is int32, which gives
+        # an error
         # oneHot.shape should be (N, nActions)
-        oneHot = qVals * torch.nn.functional.one_hot(actions, nActions).squeeze()
+        oneHot = qVals * torch.nn.functional.one_hot(actions.to(torch.int64), nActions).squeeze()
         # qChosen should have shape (N, 1)
         qChosen = torch.sum(oneHot, 1, keepdims=True)
         return qChosen
@@ -104,6 +108,6 @@ class QTrainer(BaseTrainer):
         # which is a tensor. qNextMax should be (N, 1)
         qNextMax = torch.max(qNext, 1, keepdims=True).values
         maskedVals = (1.0 - dones) * qNextMax
-        targets = rewards + self.params.discountRate * maskedVals
+        targets = rewards + self.discountRate * maskedVals
         return targets
 

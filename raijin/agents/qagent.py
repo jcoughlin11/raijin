@@ -1,7 +1,8 @@
 import numpy as np
 
+from raijin.memory.experience import Experience
+
 from .base_agent import BaseAgent
-from .experience import Experience
 
 
 # ============================================
@@ -24,7 +25,9 @@ class QAgent(BaseAgent):
     # reset
     # -----
     def reset(self):
+        # env produces an array of shape (H, W, C), so need to reshape
         frame = self.env.reset()
+        frame = self._reshape_frame(frame) 
         self.state = self.pipeline.process(frame, True)
 
     # -----
@@ -35,7 +38,7 @@ class QAgent(BaseAgent):
             exploitProb = np.random.random()
             exploreProb = self.epsilonStop + (
                 self.epsilonStart - self.epsilonStop
-            ) * np.exp(-self.epsDecayRate * self.decayStep)
+            ) * np.exp(-self.epsilonDecayRate * self.decayStep)
             self.decayStep += 1
             if exploreProb >= exploitProb:
                 actionChoiceType = "explore"
@@ -53,6 +56,8 @@ class QAgent(BaseAgent):
     def step(self, actionChoiceType, net):
         action = self.choose_action(actionChoiceType, net)
         nextFrame, reward, done, _ = self.env.step(action)
+        # env produces an array of shape (H, W, C), so need to reshape
+        nextFrame = self._reshape_frame(nextFrame)
         nextState = self.pipeline.process(nextFrame, False)
         experience = Experience(self.state, action, reward, nextState, done)
         if done:
@@ -60,3 +65,9 @@ class QAgent(BaseAgent):
         else:
             self.state = nextState
         return experience
+
+    # -----
+    # _reshape_frame
+    # -----
+    def _reshape_frame(self, frame):
+        return frame.reshape([frame.shape[-1],] + list(frame.shape[:-1])) 

@@ -50,4 +50,4 @@ class BaseNetwork(ABC, torch.nn.Module):
         # These two calcs can be vectorized
         H_out = (h + 2 * pad[0] - dil[0] * (ks[0] - 1) - 1) / s[0] + 1 
         W_out = (w + 2 * pad[1] - dil[1] * (ks[1] - 1) - 1) / s[1] + 1 
-        return np.array([convLayer.out_channels, H_out, W_out])
+        return np.array([convLayer.out_channels, H_out, W_out], dtype=np.int)

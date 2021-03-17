@@ -32,7 +32,7 @@ def get_env(envName):
 def get_nets(params, inChannels, nActions):
     nets = []
     for _, netParams in params.items():
-        nets.append(registry[netParams.name](inChannels, nActions, netParams))
+        nets.append(registry[netParams.name](inChannels, nActions, params=netParams))
     return nets
 
 
@@ -42,7 +42,9 @@ def get_nets(params, inChannels, nActions):
 def get_optimizers(params, nets):
     opts = []
     for i, (_, optParams) in enumerate(params.items()):
-        opts.append(registry[optParams.name](nets[i].parameters(), optParams))
+        cls = registry[optParams.name]
+        del optParams["name"]
+        opts.append(cls(nets[i].parameters(), **optParams))
     return opts
 
 

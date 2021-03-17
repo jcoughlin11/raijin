@@ -25,7 +25,7 @@ optimizers:
 
 losses:
     loss1:
-        name : MSE
+        name : MSELoss
 
 agent:
     name : QAgent

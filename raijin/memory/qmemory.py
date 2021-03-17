@@ -30,16 +30,19 @@ class QMemory(BaseMemory):
         indices = np.random.choice(len(self.buffer), batchSize, replace=False) 
         batch = zip(*[self.buffer[i] for i in indices])
         states, actions, rewards, nextStates, dones = batch
+        # states, actions, rewards, nextStates, and dones are tuples
+        states = torch.stack(states)
+        nextStates = torch.stack(nextStates)
         # states and nextStates should already be tensors. The others need to
         # be converted to one
         # Convert to tensors
-        actions = torch.from_numpy(actions)
-        rewards = torch.from_numpy(rewards)
-        dones = torch.from_numpy(dones)
+        actions = torch.from_numpy(np.array(actions))
+        rewards = torch.from_numpy(np.array(rewards))
+        dones = torch.from_numpy(np.array(dones))
         # Change dtype
         actions = actions.to(torch.float)
         rewards = rewards.to(torch.float)
-        dones = torch.to(torch.float)
+        dones = dones.to(torch.float)
         # Shapes
         # states: (batchSize, traceLen, cropHeight, cropWidth)
         # nextStates: (batchSize, traceLen, cropHeight, cropWidth)
