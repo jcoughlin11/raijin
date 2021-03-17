@@ -16,16 +16,17 @@ class QTrainer(BaseTrainer):
         self.memory = memory
         self.nets = nets[0]
         self.optimzers = optimizers[0]
-        self.params = params
         self.pipeline = pipeline
+        self.nEpisodes = params.nEpisodes
+        self.episodeLength = params.episodeLength
+        self.prePopulateSteps = params.prePopulateSteps
+        self.batchSize = params.batchSize
 
     # -----
     # training_step
     # -----
     def training_step(self, actionChoiceType):
         experience = self.agent.step(actionChoiceType, self.net)
-        experience.state = self.pipeline.process(experience.state)
-        experience.nextState = self.pipeline.process(experience.nextState)
         self.memory.add(experience)
 
     # -----
@@ -33,11 +34,11 @@ class QTrainer(BaseTrainer):
     # -----
     def train(self):
         self._pre_populate()
-        for episode in range(self.params.nEpisodes):
+        for episode in range(self.nEpisodes):
             self.agent.reset()
-            for episodeStep in range(self.params.episodeLength):
+            for episodeStep in range(self.episodeLength):
                 self.training_step("train")
-                batch = self.memory.sample()
+                batch = self.memory.sample(self.batchSize)
                 self.learn(batch)
 
     # -----
@@ -64,8 +65,8 @@ class QTrainer(BaseTrainer):
     # -----
     def _pre_populate(self):
         self.agent.reset()
-        for _ in range(self.params.prePopulateSteps)
-            self.training_step("random")
+        for _ in range(self.prePopulateSteps)
+            self.training_step("explore")
 
     # -----
     # _get_beliefs

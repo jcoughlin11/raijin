@@ -1,0 +1,42 @@
+env:
+    name : "SpaceInvaders-v4"
+
+memory:
+    name : "QMemory"
+    capacity : 100
+
+nets:
+    net1:
+        name : "QNetwork"
+
+pipeline:
+    name : "QPipeline"
+    normValue : 255
+    traceLen : 4
+    offsetHeight : 8
+    offsetWidth : 4
+    cropHeight : 110
+    cropWidth : 84
+
+optimizers:
+    optimizer1:
+        name : "Adam"
+        learningRate : 0.01
+
+losses:
+    loss1:
+        name : "MSE"
+
+agent:
+    name : "QAgent"
+    epsilonStart : 1.0
+    epsilonStop : 0.01
+    epsilonDecayRate : 0.00001
+
+trainer:
+    name : "QTrainer"
+    nEpisodes : 1
+    episodeLength : 100
+    batchSize : 32
+    prePopulateSteps : 64
+    discountRate : 0.8
