@@ -1,5 +1,7 @@
 import torch
 
+from raijin.utilities.register import registry
+
 from .base_trainer import BaseTrainer
 
 
@@ -10,9 +12,9 @@ class QTrainer(BaseTrainer):
     # -----
     # constructor
     # -----
-    def __init__(self, agent, loss_functions, memory, nets, optimizers, params, pipeline):
+    def __init__(self, agent, lossFunctions, memory, nets, optimizers, params, pipeline):
         self.agent = agent
-        self.loss_function = loss_functions[0]
+        self.loss_function = lossFunctions[0]  
         self.memory = memory
         self.nets = nets[0]
         self.optimzers = optimizers[0]

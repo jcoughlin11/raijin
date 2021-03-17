@@ -1,6 +1,7 @@
 import numpy as np
 
 from .base_agent import BaseAgent
+from .experience import Experience
 
 
 # ============================================
@@ -50,7 +51,6 @@ class QAgent(BaseAgent):
     def step(self, actionChoiceType, net):
         action = self.choose_action(actionChoiceType, net)
         nextFrame, reward, done, _ = self.env.step(action)
-        nextState = self.pipeline.process(nextFrame, False)
         experience = Experience(self.state, action, reward, nextState, done)
         self.state = nextState
         return experience

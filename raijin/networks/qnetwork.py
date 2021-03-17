@@ -10,14 +10,8 @@ class QNetwork(BaseNetwork):
     # -----
     # constructor
     # -----
-    def __init__(self, **kwargs):
+    def __init__(self, inChannels, nActions, **kwargs):
         super().__init__()
-        self.net = None
-
-    # -----
-    # build_net
-    # -----
-    def build_net(self, inChannels, nActions):
         # First convolutional layer
         conv1 = nn.Conv2d(
             in_channels=inChannels,

@@ -19,5 +19,5 @@ class TrainCommand(Command):
     # -----
     def handle(self):
         params = read_parameter_file(self.argument("paramFile"))
-        trainer = get_trainer()
+        trainer = get_trainer(params)
         trainer.train()

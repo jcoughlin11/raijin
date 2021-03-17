@@ -26,13 +26,6 @@ class BaseNetwork(ABC, torch.nn.Module):
         super().__init__()
 
     # -----
-    # build_net
-    # -----
-    @abstractmethod
-    def build_net():
-        pass
-
-    # -----
     # forward
     # -----
     @abstractmethod
