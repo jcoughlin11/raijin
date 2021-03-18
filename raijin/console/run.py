@@ -1,6 +1,11 @@
+import warnings
+
 import pretty_errors
 
 from .app import RaijinApplication
+
+
+warnings.filterwarnings("ignore")
 
 
 # ============================================

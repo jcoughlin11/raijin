@@ -24,6 +24,7 @@ class QTrainer(BaseTrainer):
         self.batchSize = params.batchSize
         self.discountRate = params.discountRate
         self.episodeOver = False
+        self._pre_populate()
 
     # -----
     # training_step
@@ -37,17 +38,14 @@ class QTrainer(BaseTrainer):
     # train
     # -----
     def train(self):
-        self._pre_populate()
-        for episode in range(self.nEpisodes):
-            print(f"Episode: {episode}")
-            self.agent.reset()
-            for episodeStep in range(self.episodeLength):
-                self.training_step("train")
-                batch = self.memory.sample(self.batchSize)
-                self.learn(batch)
-                if self.episodeOver:
-                    self.episodeOver = False
-                    break
+        self.agent.reset()
+        for episodeStep in range(self.episodeLength):
+            self.training_step("train")
+            batch = self.memory.sample(self.batchSize)
+            self.learn(batch)
+            if self.episodeOver:
+                self.episodeOver = False
+                break
 
     # -----
     # learn

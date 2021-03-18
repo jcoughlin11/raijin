@@ -18,6 +18,22 @@ class TrainCommand(Command):
     # handle
     # -----
     def handle(self):
+        self.line("<warning>Training...</warning>")
+        self.line("\n")
         params = read_parameter_file(self.argument("paramFile"))
         trainer = get_trainer(params)
-        trainer.train()
+        progressBar = self._get_progress_bar(trainer.nEpisodes)
+        for episode in range(trainer.nEpisodes):
+            trainer.train()
+            progressBar.advance()
+        progressBar.finish()
+
+    # -----
+    # _get_progress_bar
+    # -----
+    def _get_progress_bar(self, nEpisodes):
+        progressBar = self.progress_bar(nEpisodes)
+        formatStr = "\t<info>Episode</info>: %current%/%max%"
+        formatStr += "\n\t<info>Elapsed Time</info>: %elapsed%"
+        progressBar.set_format(formatStr)
+        return progressBar
