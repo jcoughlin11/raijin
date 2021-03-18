@@ -47,7 +47,7 @@ class QAgent(BaseAgent):
         if actionChoiceType == "explore":
             action = self.env.action_space.sample()
         elif actionChoiceType == "exploit":
-            action = net.predict(self.state)
+            action = torch.argmax(net.predict(self.state)).item()
         return action
 
     # -----
