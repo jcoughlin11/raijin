@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 from raijin.memory.experience import Experience
 
@@ -47,7 +48,7 @@ class QAgent(BaseAgent):
         if actionChoiceType == "explore":
             action = self.env.action_space.sample()
         elif actionChoiceType == "exploit":
-            action = torch.argmax(net.predict(self.state)).item()
+            action = torch.argmax(net(self.state)).item()
         return action
 
     # -----
