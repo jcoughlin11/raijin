@@ -48,7 +48,10 @@ class QAgent(BaseAgent):
         if actionChoiceType == "explore":
             action = self.env.action_space.sample()
         elif actionChoiceType == "exploit":
-            action = torch.argmax(net(self.state)).item()
+            # state has shape (C, H, W), but needs shape (N, C, H, W) even
+            # with only one sample
+            state = torch.unsqueeze(self.state, 0)
+            action = torch.argmax(net(state)).item()
         return action
 
     # -----

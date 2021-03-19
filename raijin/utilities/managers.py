@@ -62,3 +62,15 @@ def get_loss_functions(params):
             del lossParams.name
             lossFunctions.append(cls(lossParams))
     return lossFunctions
+
+
+# ============================================
+#               get_callbacks
+# ============================================
+def get_callbacks(params):
+    callbacks = {}
+    for callbackName, callback in params.items():
+        if callback == "None":
+            callback = None
+        callbacks[callbackName] = callback
+    return callbacks

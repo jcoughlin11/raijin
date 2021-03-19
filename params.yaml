@@ -36,7 +36,7 @@ agent:
 trainer:
     name : QTrainer
     nEpisodes : 5
-    episodeLength : 100
+    episodeLength : 1000
     batchSize : 32
     prePopulateSteps : 64
     discountRate : 0.8

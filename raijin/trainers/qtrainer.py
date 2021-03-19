@@ -24,6 +24,14 @@ class QTrainer(BaseTrainer):
         self.batchSize = params.batchSize
         self.discountRate = params.discountRate
         self.episodeOver = False
+        self.totalReward = 0.0
+        self.episodeReward = 0.0
+        self.metrics = {}
+
+    # -----
+    # pre_train
+    # -----
+    def pre_train(self):
         self._pre_populate()
 
     # -----
@@ -31,6 +39,7 @@ class QTrainer(BaseTrainer):
     # -----
     def training_step(self, actionChoiceType):
         experience = self.agent.step(actionChoiceType, self.net)
+        self.episodeReward += experience.reward
         self.memory.add(experience)
         self.episodeOver = experience.done
 
@@ -44,8 +53,17 @@ class QTrainer(BaseTrainer):
             batch = self.memory.sample(self.batchSize)
             self.learn(batch)
             if self.episodeOver:
-                self.episodeOver = False
                 break
+
+    # -----
+    # train_step_end
+    # -----
+    def train_step_end(self):
+        self.episodeOver = False
+        self.totalReward += self.episodeReward
+        self.episodeReward = 0.0
+        self.metrics.update({"Total Reward" : self.totalReward})
+        self.metrics.update({"Episode Reward" : self.episodeReward})
 
     # -----
     # learn

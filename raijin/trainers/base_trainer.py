@@ -35,3 +35,27 @@ class BaseTrainer(ABC):
     @abstractmethod
     def learn():
         pass
+
+    # -----
+    # pre_train
+    # -----
+    def pre_train(self):
+        pass
+
+    # -----
+    # train_step_start
+    # -----
+    def train_step_start(self):
+        pass
+        
+    # -----
+    # train_step_end
+    # -----
+    def train_step_end(self):
+        pass
+        
+    # -----
+    # post_train
+    # -----
+    def post_train(self):
+        pass
