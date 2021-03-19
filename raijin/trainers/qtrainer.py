@@ -24,9 +24,8 @@ class QTrainer(BaseTrainer):
         self.batchSize = params.batchSize
         self.discountRate = params.discountRate
         self.episodeOver = False
-        self.totalReward = 0.0
         self.episodeReward = 0.0
-        self.metrics = {}
+        self.episodeRewards = []
 
     # -----
     # pre_train
@@ -60,10 +59,8 @@ class QTrainer(BaseTrainer):
     # -----
     def train_step_end(self):
         self.episodeOver = False
-        self.totalReward += self.episodeReward
+        self.episodeRewards.append(self.episodeReward)
         self.episodeReward = 0.0
-        self.metrics.update({"Total Reward" : self.totalReward})
-        self.metrics.update({"Episode Reward" : self.episodeReward})
 
     # -----
     # learn
