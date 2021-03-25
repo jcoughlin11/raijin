@@ -69,7 +69,20 @@ def get_loss_functions(params):
 # ============================================
 def get_state_dicts(manager):
     stateDicts = {}
-    for attrName, attrVal in manager.__dict__.items():
-        if hasattr(attrVal, "get_state_dict"):
-            stateDicts[attrname] = attrVal.get_state_dict()
+    for attrVal in manager.__dict__.values():
+        if hasattr(attrVal, "state_dict"):
+            stateDict = attrVal.state_dict()
+            # The loss and optimizer don't have __name__ attrs, but
+            # the loss has a _get_name method. For the optimizer, we
+            # have to use str(). This prints the parameters, too,
+            # though, which need to be removed
+            if hasattr(attrVal, "__name__"):
+                name = attrVal.__name__
+            elif hasattr(attrVal, "_get_name()"):
+                name = attrVal._get_name()
+            else:
+                name = str(attrVal).split()[0]
+            stateDicts[name] = stateDict
+    if hasattr(manager, "state_dict"):
+        stateDicts[manager.__name__] = manager.state_dict()
     return stateDicts

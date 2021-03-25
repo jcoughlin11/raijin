@@ -10,6 +10,7 @@ from .base_memory import BaseMemory
 #                   QMemory
 # ============================================
 class QMemory(BaseMemory):
+    __name__ = "QMemory"
     # -----
     # constructor
     # -----
@@ -55,7 +56,7 @@ class QMemory(BaseMemory):
         return (states, actions, rewards, nextStates, dones)
 
     # -----
-    # get_state_dict
+    # state_dict
     # -----
-    def get_state_dict(self):
+    def state_dict(self):
         return {}

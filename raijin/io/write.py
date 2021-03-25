@@ -1,5 +1,8 @@
 import os
 
+import h5py
+import numpy as np
+from omegaconf import OmegaConf as config
 import torch
 import yaml
 
@@ -27,7 +30,7 @@ def save_checkpoint(trainer, episodeNum, params):
     torch.save(stateDicts, chkptFile)
     # Save copy of parameter file
     with open(os.path.join(chkptDir, "params.yaml"), "w") as fd:
-        yaml.safe_dump(params, fd)
+        yaml.safe_dump(config.to_yaml(params), fd)
     # Save experience buffer
     save_memory(trainer.memory, chkptDir)
 
@@ -37,7 +40,7 @@ def save_checkpoint(trainer, episodeNum, params):
 # ============================================
 def save_final_model(trainer, baseName, outputDir):
     # https://tinyurl.com/hr7fw54w
-    outputDir = sanitize_path(params.io.outputDir)
+    outputDir = sanitize_path(outputDir)
     if not os.path.isdir(outputDir):
         os.makedirs(outputDir)
     modelFile = os.path.join(outputDir, "model.pt")
@@ -60,16 +63,16 @@ def save_memory(memory, outputDir):
     fr = h5py.File(rewardsFile, "w")
     fn = h5py.File(nextStatesFile, "w")
     fd = h5py.File(donesFile, "w")
-    m = len(memory)
-    statesShape = list(memory[0].state.to_numpy().shape) + N
+    m = len(memory.buffer)
+    statesShape = list(memory.buffer[0].state.numpy().shape) + [m,] 
     statesDs = fs.create_dataset("states", statesShape, dtype=np.float)
-    actionsDs = fa.create_dataset("actions", N, dtype=np.int)
-    rewardsDs = fr.create_dataset("rewards", N, dtype=np.float)
+    actionsDs = fa.create_dataset("actions", m, dtype=np.int)
+    rewardsDs = fr.create_dataset("rewards", m, dtype=np.float)
     nextStatesDs = fn.create_dataset("nextStates", statesShape, dtype=np.float)
-    donesDs = fd.create_dataset("dones", N, dtype=np.int)
-    for i, experience in enumerate(memory):
-        statesDs[:,:,i] = experience.state.to_numpy()
+    donesDs = fd.create_dataset("dones", m, dtype=np.int)
+    for i, experience in enumerate(memory.buffer):
+        statesDs[:,:,:,i] = experience.state.numpy()
         actionsDs[i] = experience.action
         rewardsDs[i] = experience.reward
-        nextStatesDs[:,:,i] = experience.nextState
+        nextStatesDs[:,:,:,i] = experience.nextState.numpy()
         donesDs[i] = experience.done

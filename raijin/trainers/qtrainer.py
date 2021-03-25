@@ -9,6 +9,7 @@ from .base_trainer import BaseTrainer
 #                   QTrainer
 # ============================================
 class QTrainer(BaseTrainer):
+    __name__ = "QTrainer"
     # -----
     # constructor
     # -----
@@ -124,3 +125,8 @@ class QTrainer(BaseTrainer):
         targets = rewards + self.discountRate * maskedVals
         return targets
 
+    # -----
+    # state_dict
+    # -----
+    def state_dict(self):
+        return {}

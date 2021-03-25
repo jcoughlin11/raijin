@@ -7,6 +7,7 @@ from .base_network import BaseNetwork
 #                  QNetwork
 # ============================================
 class QNetwork(BaseNetwork):
+    __name__ = "QNetwork"
     # -----
     # constructor
     # -----

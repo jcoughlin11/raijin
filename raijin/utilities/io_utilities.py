@@ -18,7 +18,7 @@ def get_chkpt_num(outputDir):
         return -1
     chkpts = []
     for c in os.listdir(outputDir):
-        if c.startswith("chkpt") and os.path.isdir(c):
+        if c.startswith("checkpoint") and os.path.isdir(os.path.join(outputDir, c)):
             chkpts.append(c)
     chkpts = sorted(chkpts, reverse=True)
     if len(chkpts) == 0:

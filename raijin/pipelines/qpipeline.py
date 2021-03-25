@@ -10,6 +10,7 @@ from .base_pipeline import BasePipeline
 #                  QPipeline
 # ============================================
 class QPipeline(BasePipeline):
+    __name__ = "QPipeline"
     # -----
     # constructor
     # -----
@@ -81,7 +82,7 @@ class QPipeline(BasePipeline):
         return state
 
     # -----
-    # get_state_dict
+    # state_dict
     # -----
-    def get_state_dict(self):
+    def state_dict(self):
         return {"frameStack" : self.frameStack}

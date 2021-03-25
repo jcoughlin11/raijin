@@ -10,6 +10,7 @@ from .base_agent import BaseAgent
 #                    QAgent
 # ============================================
 class QAgent(BaseAgent):
+    __name__ = "QAgent"
     # -----
     # constructor
     # -----
@@ -77,13 +78,13 @@ class QAgent(BaseAgent):
         return frame.reshape([frame.shape[-1],] + list(frame.shape[:-1])) 
 
     # -----
-    # get_state_dict
+    # state_dict
     # -----
-    def get_state_dict(self):
+    def state_dict(self):
         stateDict = {
             "envState" : self.env.clone_full_state(), 
-            "pipeline" : pipeline.get_state_dict(),
-            "state" : state,
-            "decayStep" : decayStep
+            "pipeline" : self.pipeline.state_dict(),
+            "state" : self.state,
+            "decayStep" : self.decayStep
         }
         return stateDict
