@@ -79,3 +79,9 @@ class QPipeline(BasePipeline):
         frame = self.crop(frame)
         state = self.stack(frame, newEpisode)
         return state
+
+    # -----
+    # get_state_dict
+    # -----
+    def get_state_dict(self):
+        return {"frameStack" : self.frameStack}

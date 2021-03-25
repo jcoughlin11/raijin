@@ -2,6 +2,7 @@ import numpy as np
 import torch
 
 from raijin.memory.experience import Experience
+from raijin.utilities.managers import get_env_state
 
 from .base_agent import BaseAgent
 
@@ -75,3 +76,15 @@ class QAgent(BaseAgent):
     # -----
     def _reshape_frame(self, frame):
         return frame.reshape([frame.shape[-1],] + list(frame.shape[:-1])) 
+
+    # -----
+    # get_state_dict
+    # -----
+    def get_state_dict(self):
+        stateDict = {
+            "envState" : get_env_state(self.env),
+            "pipeline" : pipeline.get_state_dict(),
+            "state" : state,
+            "decayStep" : decayStep
+        }
+        return stateDict

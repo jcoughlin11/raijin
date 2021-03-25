@@ -12,6 +12,7 @@ omegaconf = "^2.0.6"
 gym = "^0.18.0"
 atari-py = "^0.2.6"
 torchvision = "0.8.2"
+h5py = "^3.2.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"

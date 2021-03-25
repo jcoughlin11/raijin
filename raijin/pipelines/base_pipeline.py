@@ -21,3 +21,10 @@ class BasePipeline(ABC):
     @abstractmethod
     def process():
         pass
+
+    # -----
+    # state_dict
+    # -----
+    @abstractmethod
+    def state_dict():
+        pass

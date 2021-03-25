@@ -37,6 +37,13 @@ class BaseTrainer(ABC):
         pass
 
     # -----
+    # state_dict
+    # -----
+    @abstractmethod
+    def state_dict():
+        pass
+
+    # -----
     # pre_train
     # -----
     def pre_train(self):

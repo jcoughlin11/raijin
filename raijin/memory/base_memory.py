@@ -28,3 +28,10 @@ class BaseMemory(ABC):
     @abstractmethod
     def sample():
         pass
+
+    # -----
+    # state_dict
+    # -----
+    @abstractmethod
+    def state_dict():
+        pass

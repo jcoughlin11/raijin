@@ -2,6 +2,8 @@ from cleo import Command
 import numpy as np
 
 from raijin.io.read import read_parameter_file
+from raijin.io.write import save_checkpoint
+from raijin.io.write import save_final_model
 from raijin.utilities.managers import get_trainer
 
 
@@ -33,8 +35,11 @@ class TrainCommand(Command):
             progressBar.set_message(f"<info>Episode Reward</info>: {trainer.episodeReward}")
             trainer.train_step_end()
             progressBar.advance()
+            if episode % params.io.checkpointFreq == 0:
+                save_checkpoint(trainer, episode, params)
         trainer.post_train()
         progressBar.finish()
+        save_final_model(trainer, params.io.checkpointBase, params.io.outputDir)
 
     # -----
     # _get_progress_bar

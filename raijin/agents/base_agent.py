@@ -35,3 +35,10 @@ class BaseAgent(ABC):
     @abstractmethod
     def step(self):
         pass
+
+    # -----
+    # state_dict
+    # -----
+    @abstractmethod
+    def state_dict():
+        pass

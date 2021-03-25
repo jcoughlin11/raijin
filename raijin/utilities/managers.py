@@ -65,12 +65,19 @@ def get_loss_functions(params):
 
 
 # ============================================
-#               get_callbacks
+#              get_state_dicts
 # ============================================
-def get_callbacks(params):
-    callbacks = {}
-    for callbackName, callback in params.items():
-        if callback == "None":
-            callback = None
-        callbacks[callbackName] = callback
-    return callbacks
+def get_state_dicts(manager):
+    stateDicts = {}
+    for attrName, attrVal in manager.__dict__.items():
+        if hasattr(attrVal, "get_state_dict"):
+            stateDicts[attrname] = attrVal.get_state_dict()
+    return stateDicts
+
+
+# ============================================
+#               get_env_state
+# ============================================
+def get_env_state(env):
+    # Needs to get the current game frame and the state of the rng
+    raise NotImplementedError

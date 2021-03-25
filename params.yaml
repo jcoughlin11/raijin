@@ -40,3 +40,8 @@ trainer:
     batchSize : 32
     prePopulateSteps : 64
     discountRate : 0.8
+
+io:
+    checkpointBase: spaceinvaders
+    checkpointFreq: 1
+    outputDir: $HOME/data/ai_data

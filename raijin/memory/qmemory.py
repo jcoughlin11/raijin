@@ -53,3 +53,9 @@ class QMemory(BaseMemory):
         rewards = rewards.reshape((batchSize, 1))
         dones = dones.reshape((batchSize, 1))
         return (states, actions, rewards, nextStates, dones)
+
+    # -----
+    # get_state_dict
+    # -----
+    def get_state_dict(self):
+        return {}
