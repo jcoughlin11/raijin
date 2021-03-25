@@ -73,11 +73,3 @@ def get_state_dicts(manager):
         if hasattr(attrVal, "get_state_dict"):
             stateDicts[attrname] = attrVal.get_state_dict()
     return stateDicts
-
-
-# ============================================
-#               get_env_state
-# ============================================
-def get_env_state(env):
-    # Needs to get the current game frame and the state of the rng
-    raise NotImplementedError
