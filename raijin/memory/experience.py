@@ -9,5 +9,5 @@ Experience = namedtuple(
         "reward",
         "nextState",
         "done",
-    ]
+    ],
 )

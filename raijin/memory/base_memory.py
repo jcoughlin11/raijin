@@ -20,6 +20,9 @@ class BaseMemory(ABC):
     # -----
     @abstractmethod
     def add():
+        """
+        Puts a new experience into the memory buffer.
+        """
         pass
 
     # -----
@@ -27,6 +30,9 @@ class BaseMemory(ABC):
     # -----
     @abstractmethod
     def sample():
+        """
+        Extracts a subset of experiences from the buffer.
+        """
         pass
 
     # -----

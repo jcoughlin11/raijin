@@ -10,7 +10,17 @@ from .base_agent import BaseAgent
 #                    QAgent
 # ============================================
 class QAgent(BaseAgent):
+    """
+    The agent described in [Mnih et al. 2013][1].
+
+    * Progresses through the game frame-by-frame
+    * Employs an epsilon-greedy strategy for action selection
+
+    [1]: https://arxiv.org/abs/1312.5602
+    """
+
     __name__ = "QAgent"
+
     # -----
     # constructor
     # -----
@@ -27,22 +37,40 @@ class QAgent(BaseAgent):
     # reset
     # -----
     def reset(self):
-        # env produces an array of shape (H, W, C), so need to reshape
+        """
+        Reverts the environment back to its initial state.
+        """
         frame = self.env.reset()
-        frame = self._reshape_frame(frame) 
         self.state = self.pipeline.process(frame, True)
 
     # -----
     # choose_action
     # -----
     def choose_action(self, actionChoiceType, net):
+        """
+        Implements epsilon-greedy action selection strategy.
+
+        * Draw a random number `n` from a uniform distribution in [0,1)
+        * Calculate epsilon for the current timestep
+        * If n < epsilon, we choose a random action
+        * Otherwise we go with the action the network thinks is best
+
+        Epsilon starts large so that, at the beginning of training, we
+        have a high probability of picking a random action. This allows
+        the agent to explore a large number of state-action pairs.
+
+        As time goes on and the agent has learned more, epsilon gets
+        smaller so that there is a higher probability of selecting a
+        "known good" action and, therefore, progressing further into
+        the game.
+        """
         if actionChoiceType == "train":
-            exploitProb = np.random.random()
-            exploreProb = self.epsilonStop + (
+            n = np.random.random()
+            epsilon = self.epsilonStop + (
                 self.epsilonStart - self.epsilonStop
             ) * np.exp(-self.epsilonDecayRate * self.decayStep)
             self.decayStep += 1
-            if exploreProb >= exploitProb:
+            if n <= epsilon:
                 actionChoiceType = "explore"
             else:
                 actionChoiceType = "exploit"
@@ -59,10 +87,11 @@ class QAgent(BaseAgent):
     # step
     # -----
     def step(self, actionChoiceType, net):
+        """
+        Transition from one game frame to the next.
+        """
         action = self.choose_action(actionChoiceType, net)
         nextFrame, reward, done, _ = self.env.step(action)
-        # env produces an array of shape (H, W, C), so need to reshape
-        nextFrame = self._reshape_frame(nextFrame)
         nextState = self.pipeline.process(nextFrame, False)
         experience = Experience(self.state, action, reward, nextState, done)
         if done:
@@ -72,19 +101,13 @@ class QAgent(BaseAgent):
         return experience
 
     # -----
-    # _reshape_frame
-    # -----
-    def _reshape_frame(self, frame):
-        return frame.reshape([frame.shape[-1],] + list(frame.shape[:-1])) 
-
-    # -----
     # state_dict
     # -----
     def state_dict(self):
         stateDict = {
-            "envState" : self.env.clone_full_state(), 
-            "pipeline" : self.pipeline.state_dict(),
-            "state" : self.state,
-            "decayStep" : self.decayStep
+            "envState": self.env.clone_full_state(),
+            "pipeline": self.pipeline.state_dict(),
+            "state": self.state,
+            "decayStep": self.decayStep,
         }
         return stateDict

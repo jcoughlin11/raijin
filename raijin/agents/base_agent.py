@@ -8,6 +8,16 @@ from raijin.utilities.register import register_object
 #                  BaseAgent
 # ============================================
 class BaseAgent(ABC):
+    """
+    The agent is the object that interacts with the environment.
+
+    This means that the agent is responsible for:
+        * Choosing actions
+        * Transitioning to the next state in the game
+        * Properly preparing the game frames returned by the environment
+            for use in the neural network
+    """
+
     # -----
     # subclass hook
     # -----
@@ -20,6 +30,9 @@ class BaseAgent(ABC):
     # -----
     @abstractmethod
     def reset(self):
+        """
+        Reverts the environment back to its initial state.
+        """
         pass
 
     # -----
@@ -27,6 +40,9 @@ class BaseAgent(ABC):
     # -----
     @abstractmethod
     def choose_action(self):
+        """
+        Selects an action to take.
+        """
         pass
 
     # -----
@@ -34,6 +50,9 @@ class BaseAgent(ABC):
     # -----
     @abstractmethod
     def step(self):
+        """
+        Transitions to the next game state.
+        """
         pass
 
     # -----
@@ -41,4 +60,8 @@ class BaseAgent(ABC):
     # -----
     @abstractmethod
     def state_dict():
+        """
+        Returns a dictionary containing any stateful parameters. The
+        state dictionary is used when saving a checkpoint.
+        """
         pass

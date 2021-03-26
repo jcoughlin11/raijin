@@ -10,7 +10,17 @@ from .base_memory import BaseMemory
 #                   QMemory
 # ============================================
 class QMemory(BaseMemory):
+    """
+    Implements the memory buffer from [Mnih et al. 2013][1].
+
+    The buffer is a deque and sampling is done randomly and without
+    replacement.
+
+    [1]: https://arxiv.org/abs/1312.5602
+    """
+
     __name__ = "QMemory"
+
     # -----
     # constructor
     # -----
@@ -28,15 +38,27 @@ class QMemory(BaseMemory):
     # sample
     # -----
     def sample(self, batchSize):
-        indices = np.random.choice(len(self.buffer), batchSize, replace=False) 
+        # Choose which experiences to grab
+        indices = np.random.choice(len(self.buffer), batchSize, replace=False)
+        # Extract those experiences from the buffer
         batch = zip(*[self.buffer[i] for i in indices])
+        return self._process_batch(batch, batchSize)
+
+    # -----
+    # _process_batch
+    # -----
+    def _process_batch(self, batch, batchSize):
+        """
+        Converts the components of the experiences within batch to
+        tensors of the appropriate shape and type.
+        """
+        # Split the batch up into components. Each component is a tuple
         states, actions, rewards, nextStates, dones = batch
-        # states, actions, rewards, nextStates, and dones are tuples
+        # Each state and nextState is already a tensor, so we can just
+        # stack them
         states = torch.stack(states)
         nextStates = torch.stack(nextStates)
-        # states and nextStates should already be tensors. The others need to
-        # be converted to one
-        # Convert to tensors
+        # Convert the other components to tensors
         actions = torch.from_numpy(np.array(actions))
         rewards = torch.from_numpy(np.array(rewards))
         dones = torch.from_numpy(np.array(dones))
@@ -44,12 +66,7 @@ class QMemory(BaseMemory):
         actions = actions.to(torch.float)
         rewards = rewards.to(torch.float)
         dones = dones.to(torch.float)
-        # Shapes
-        # states: (batchSize, traceLen, cropHeight, cropWidth)
-        # nextStates: (batchSize, traceLen, cropHeight, cropWidth)
-        # actions: (batchSize, 1)
-        # rewards: (batchSize, 1)
-        # dones: (batchSize, 1)
+        # Reshape
         actions = actions.reshape((batchSize, 1))
         rewards = rewards.reshape((batchSize, 1))
         dones = dones.reshape((batchSize, 1))

@@ -7,7 +7,14 @@ from .base_network import BaseNetwork
 #                  QNetwork
 # ============================================
 class QNetwork(BaseNetwork):
+    """
+    Implements the network described in [Mnih et al. 2013][1].
+
+    [1]: https://arxiv.org/abs/1312.5602
+    """
+
     __name__ = "QNetwork"
+
     # -----
     # constructor
     # -----
@@ -15,27 +22,21 @@ class QNetwork(BaseNetwork):
         super().__init__()
         # First convolutional layer
         conv1 = nn.Conv2d(
-            in_channels=inChannels,
-            out_channels=16,
-            kernel_size=8,
-            stride=4
+            in_channels=inChannels, out_channels=16, kernel_size=8, stride=4
         )
         conv1OutShape = self.get_conv_out_shape(110, 84, conv1)
         # Second convolutional layer
         conv2 = nn.Conv2d(
-            in_channels=16,
-            out_channels=32,
-            kernel_size=4,
-            stride=2
+            in_channels=16, out_channels=32, kernel_size=4, stride=2
         )
-        conv2OutShape = self.get_conv_out_shape(conv1OutShape[1], conv1OutShape[2], conv2)
-        # First fully connected layer (torch's Linear -> tf's Dense)
+        conv2OutShape = self.get_conv_out_shape(
+            conv1OutShape[1], conv1OutShape[2], conv2
+        )
+        # First fully connected layer
         fc1 = nn.Linear(in_features=conv2OutShape.prod(), out_features=256)
         # Output layer
         outputLayer = nn.Linear(in_features=256, out_features=nActions)
-        # Network. Note that the last linear activation function isn't
-        # needed here as it was in tf. In tf we had to specify an
-        # activation, and linear is just g(x) = x
+        # Network
         self.net = nn.Sequential(
             conv1,
             nn.ReLU(),
@@ -44,7 +45,7 @@ class QNetwork(BaseNetwork):
             nn.Flatten(),
             fc1,
             nn.ReLU(),
-            outputLayer
+            outputLayer,
         )
 
     # -----

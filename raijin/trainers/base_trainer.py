@@ -20,6 +20,9 @@ class BaseTrainer(ABC):
     # -----
     @abstractmethod
     def training_step():
+        """
+        Performs one iteration of the training loop.
+        """
         pass
 
     # -----
@@ -27,6 +30,9 @@ class BaseTrainer(ABC):
     # -----
     @abstractmethod
     def train():
+        """
+        Contains the training loop for one full episode.
+        """
         pass
 
     # -----
@@ -34,6 +40,9 @@ class BaseTrainer(ABC):
     # -----
     @abstractmethod
     def learn():
+        """
+        Updates the weights in the network(s).
+        """
         pass
 
     # -----
@@ -47,22 +56,34 @@ class BaseTrainer(ABC):
     # pre_train
     # -----
     def pre_train(self):
+        """
+        Called before the start of training.
+        """
         pass
 
     # -----
     # train_step_start
     # -----
     def train_step_start(self):
+        """
+        Called at the start of each episode.
+        """
         pass
-        
+
     # -----
     # train_step_end
     # -----
     def train_step_end(self):
+        """
+        Called at the end of each episode.
+        """
         pass
-        
+
     # -----
     # post_train
     # -----
     def post_train(self):
+        """
+        Called after training.
+        """
         pass

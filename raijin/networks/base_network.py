@@ -30,6 +30,9 @@ class BaseNetwork(ABC, torch.nn.Module):
     # -----
     @abstractmethod
     def forward():
+        """
+        Defines a forward pass through the network.
+        """
         pass
 
     # -----
@@ -38,8 +41,8 @@ class BaseNetwork(ABC, torch.nn.Module):
     def get_conv_out_shape(self, H_in, W_in, convLayer):
         """
         Calculates the shape of the tensor output by the given convolutional
-        layer. Does NOT include the batch dimension. See:
-        https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html#torch.nn.Conv2d
+        layer. Does NOT include the batch dimension.
+        See: https://tinyurl.com/3h6cm9fk
         """
         pad = convLayer.padding
         dil = convLayer.dilation
@@ -48,6 +51,6 @@ class BaseNetwork(ABC, torch.nn.Module):
         h = H_in
         w = W_in
         # These two calcs can be vectorized
-        H_out = (h + 2 * pad[0] - dil[0] * (ks[0] - 1) - 1) / s[0] + 1 
-        W_out = (w + 2 * pad[1] - dil[1] * (ks[1] - 1) - 1) / s[1] + 1 
+        H_out = (h + 2 * pad[0] - dil[0] * (ks[0] - 1) - 1) / s[0] + 1
+        W_out = (w + 2 * pad[1] - dil[1] * (ks[1] - 1) - 1) / s[1] + 1
         return np.array([convLayer.out_channels, H_out, W_out], dtype=np.int)

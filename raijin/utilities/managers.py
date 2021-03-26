@@ -10,11 +10,13 @@ def get_trainer(params):
     env = get_env(params.env.name)
     pipeline = registry[params.pipeline.name](params.pipeline)
     agent = registry[params.agent.name](env, pipeline, params.agent)
-    memory = registry[params.memory.name](params.memory) 
+    memory = registry[params.memory.name](params.memory)
     nets = get_nets(params.nets, pipeline.traceLen, env.action_space.n)
     optimizers = get_optimizers(params.optimizers, nets)
     lossFunctions = get_loss_functions(params.losses)
-    trainer = registry[params.trainer.name](agent, lossFunctions, memory, nets, optimizers, params.trainer)
+    trainer = registry[params.trainer.name](
+        agent, lossFunctions, memory, nets, optimizers, params.trainer
+    )
     return trainer
 
 
@@ -32,7 +34,9 @@ def get_env(envName):
 def get_nets(params, inChannels, nActions):
     nets = []
     for _, netParams in params.items():
-        nets.append(registry[netParams.name](inChannels, nActions, params=netParams))
+        nets.append(
+            registry[netParams.name](inChannels, nActions, params=netParams)
+        )
     return nets
 
 

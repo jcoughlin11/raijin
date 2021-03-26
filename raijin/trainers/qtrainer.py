@@ -1,7 +1,5 @@
 import torch
 
-from raijin.utilities.register import registry
-
 from .base_trainer import BaseTrainer
 
 
@@ -10,12 +8,13 @@ from .base_trainer import BaseTrainer
 # ============================================
 class QTrainer(BaseTrainer):
     __name__ = "QTrainer"
+
     # -----
     # constructor
     # -----
     def __init__(self, agent, lossFunctions, memory, nets, optimizers, params):
         self.agent = agent
-        self.loss_function = lossFunctions[0]  
+        self.loss_function = lossFunctions[0]
         self.memory = memory
         self.net = nets[0]
         self.optimizer = optimizers[0]
@@ -68,11 +67,27 @@ class QTrainer(BaseTrainer):
     # -----
     def learn(self, batch):
         """
-        states.shape should be (N, traceLen, rows, cols)
-        actions.shape should be (N, 1)
-        rewards.shape should be (N, 1)
-        nextStates.shape should == states.shape
-        dones.shape should be (N, 1)
+        Implements the Deep-Q Learning algorithm from
+        [Mnih et al. 2013][1].
+
+        We compare what the network thinks are the best actions for the
+        given states (the beliefs) to the "actual" best actions (the
+        targets).
+
+        The targets are determined from the Bellman equation. This is a
+        bootstrapping process that utilizes the network's own knowledge
+        and, presumably, gets better with time.
+
+        The cost function J depends on the beliefs and the targets.
+        Since both of those are determined from the network, they
+        depend on the network's parameters W. Since we are taking
+        dJ/dW we need to tell pytorch to "pretend" that the targets do
+        not depend on the parameters. This is because the targets
+        represent the "right" answers and aren't "supposed" to depend
+        on the weights. We do this by using `detach` when getting the
+        loss.
+
+        [1]: https://arxiv.org/abs/1312.5602
         """
         states, actions, rewards, nextStates, dones = batch
         beliefs = self._get_beliefs(states, actions)
@@ -86,6 +101,11 @@ class QTrainer(BaseTrainer):
     # _pre_populate
     # -----
     def _pre_populate(self):
+        """
+        Fills the initially empty memory buffer so that we are not
+        trying to sample from an empty or under-filled buffer at
+        the start of training.
+        """
         self.agent.reset()
         for _ in range(self.prePopulateSteps):
             self.training_step("explore")
@@ -94,19 +114,24 @@ class QTrainer(BaseTrainer):
     # _get_beliefs
     # -----
     def _get_beliefs(self, states, actions):
-        # qVals should have shape (N, nActions)
+        """
+        Gets what the network believes to be the best actions for each
+        given state. The strength of this belief is given by the
+        Q-value.
+
+        We only need to change the Q-values for the chosen actions,
+        so we use a one-hot vector to vectorize the calculation.
+        """
         qVals = self.net(states)
         nActions = qVals.shape[1]
-        # We only need to change the Q-values for the chosen actions,
-        # so we use a one-hot to vectorize the calculation while
-        # simultaneously keeping the non-chosen indices untouched
         # one_hot returns a tensor with one more dimension than the input,
-        # se we squeeze that out
-        # one_hot has to have a long dtype. torch.int is int32, which gives
-        # an error
-        # oneHot.shape should be (N, nActions)
-        oneHot = qVals * torch.nn.functional.one_hot(actions.to(torch.int64), nActions).squeeze()
-        # qChosen should have shape (N, 1)
+        # so we squeeze that out. The input also has to have a long dtype.
+        oneHot = (
+            qVals
+            * torch.nn.functional.one_hot(
+                actions.to(torch.int64), nActions
+            ).squeeze()
+        )
         qChosen = torch.sum(oneHot, 1, keepdims=True)
         return qChosen
 
@@ -114,12 +139,18 @@ class QTrainer(BaseTrainer):
     # _get_targets
     # -----
     def _get_targets(self, nextStates, dones, rewards):
-        # Uses Bellman equation to get "right" answers. Shape should be
-        # (N, nActions)
+        """
+        Uses the Bellman equation along with the network in order to
+        bootstrap the "actual" best action for a given state.
+
+        Getting the targets is actually piecewise; if the result of
+        an action is a terminal state, then the target is just the
+        reward. Otherwise, we use the Bellman equation. Using a
+        mask allows us to do both parts of the calculation at once.
+        """
         qNext = self.net(nextStates)
-        # the max operation doesn't return a tensor, it returns an object
-        # that contains both the values and indices. We want the values,
-        # which is a tensor. qNextMax should be (N, 1)
+        # the max operation doesn't return a tensor; it returns an object
+        # that contains both the values and indices
         qNextMax = torch.max(qNext, 1, keepdims=True).values
         maskedVals = (1.0 - dones) * qNextMax
         targets = rewards + self.discountRate * maskedVals

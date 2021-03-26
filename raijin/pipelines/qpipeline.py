@@ -11,6 +11,7 @@ from .base_pipeline import BasePipeline
 # ============================================
 class QPipeline(BasePipeline):
     __name__ = "QPipeline"
+
     # -----
     # constructor
     # -----
@@ -28,10 +29,11 @@ class QPipeline(BasePipeline):
     # -----
     def normalize_frame(self, frame):
         """
-        I don't use tf.normalize here because that does x' = (x - mu)/sigma
-        and since I don't have all of the data beforehand, I'm not sure
-        what to do about mu and sigma. Doing it on a frame-by-frame basis
-        seems wrong.
+        Rescales each rgb value to be between 0 and 1.
+
+        torchvision's normalize function isn't used because that
+        computes x' = (x - mu) / sigma. Since we don't have all of the
+        data beforehand, getting mu and sigma is problematic.
         """
         return frame / self.normValue
 
@@ -39,28 +41,43 @@ class QPipeline(BasePipeline):
     # grayscale
     # -----
     def grayscale(self, frame):
-        # Shape must be (..., H, W) where ... denotes an arbitrary number
-        # of dimensions
+        """
+        Converts the image to have just one channel.
+
+        The shape of the image must be (..., H, W) where ... denotes an
+        arbitrary number of dimensions.
+        """
         return tf.rgb_to_grayscale(frame)
 
     # -----
     # crop
     # -----
     def crop(self, frame):
-        # Shape must be (..., H, W) where ... denotes an arbitrary number
-        # of dimensions
+        """
+        Cuts out the unnecessary parts of the image.
+
+        The shape of the image must be (..., H, W) where ... denotes an
+        arbitrary number of dimensions.
+        """
         return tf.crop(
             frame,
             self.offsetHeight,
             self.offsetWidth,
             self.cropHeight,
-            self.cropWidth
+            self.cropWidth,
         )
 
     # -----
     # stack
     # -----
     def stack(self, frame, newEpisode):
+        """
+        Adds the given frame to the top of a pile containing the
+        preceding frames.
+
+        This is done to help with the problem of motion.
+        """
+        # The channel dimension isn't needed
         frame = torch.squeeze(frame)
         if newEpisode:
             for _ in range(self.traceLen):
@@ -74,6 +91,7 @@ class QPipeline(BasePipeline):
     # process
     # -----
     def process(self, frame, newEpisode):
+        frame = self._reshape_frame(frame)
         frame = torch.from_numpy(frame)
         frame = self.normalize_frame(frame)
         frame = self.grayscale(frame)
@@ -85,4 +103,4 @@ class QPipeline(BasePipeline):
     # state_dict
     # -----
     def state_dict(self):
-        return {"frameStack" : self.frameStack}
+        return {"frameStack": self.frameStack}

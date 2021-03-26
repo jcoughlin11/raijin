@@ -20,6 +20,9 @@ class BasePipeline(ABC):
     # -----
     @abstractmethod
     def process():
+        """
+        Performs any desired image processing on the given game frame.
+        """
         pass
 
     # -----
@@ -28,3 +31,18 @@ class BasePipeline(ABC):
     @abstractmethod
     def state_dict():
         pass
+
+    # -----
+    # _reshape_frame
+    # -----
+    def _reshape_frame(self, frame):
+        """
+        The environment produces an array of shape (H, W, C), but
+        pytorch needs the channels to be first.
+        """
+        return frame.reshape(
+            [
+                frame.shape[-1],
+            ]
+            + list(frame.shape[:-1])
+        )

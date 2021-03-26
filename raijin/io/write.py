@@ -15,16 +15,33 @@ from raijin.utilities.managers import get_state_dicts
 #               save_checkpoint
 # ============================================
 def save_checkpoint(trainer, episodeNum, params):
-    # https://tinyurl.com/ycyuww2c
+    """
+    Saves the state of the trainer in a checkpoint directory.
+
+    The checkpoint directories are numbered sequentially, e.g.,
+    `checkpoint_0`, `checkpoint_1`, etc.
+
+    Each checkpoint contains:
+        * A copy of the parameter file
+        * The memory buffer
+        * The stateful parameters for:
+            * The optimizer
+            * The loss
+            * The network(s)
+            * The trainer
+            * The pipeline
+            * The agent
+
+    See: https://tinyurl.com/ycyuww2c
+    """
     outputDir = sanitize_path(params.io.outputDir)
     # Get the most recent checkpoint number
     chkptNum = get_chkpt_num(outputDir)
     # Create new checkpoint directory
     chkptDir = os.path.join(outputDir, f"checkpoint_{chkptNum+1}")
     os.makedirs(chkptDir)
-    # Get state dictionaries
+    # Get state dictionaries and save
     stateDicts = get_state_dicts(trainer)
-    # Save copy of parameter file
     stateDicts["episodeNum"] = episodeNum
     chkptFile = os.path.join(chkptDir, f"{params.io.checkpointBase}.tar")
     torch.save(stateDicts, chkptFile)
@@ -39,7 +56,11 @@ def save_checkpoint(trainer, episodeNum, params):
 #              save_final_model
 # ============================================
 def save_final_model(trainer, baseName, outputDir):
-    # https://tinyurl.com/hr7fw54w
+    """
+    Saves the network parameters once training is finished.
+
+    See: https://tinyurl.com/hr7fw54w
+    """
     outputDir = sanitize_path(outputDir)
     if not os.path.isdir(outputDir):
         os.makedirs(outputDir)
@@ -51,28 +72,45 @@ def save_final_model(trainer, baseName, outputDir):
 #                save_memory
 # ============================================
 def save_memory(memory, outputDir):
-    # Brute force right now. There's probably a more efficient way
-    # to do this
+    """
+    Saves the memory buffer.
+
+    This is done by breaking each experience into its component parts
+    (states, actions, rewards, nextStates, and dones) and then saving
+    each one to is own hdf5 file.
+    """
+    # Set up file names
     statesFile = os.path.join(outputDir, "buffer_states.h5py")
     actionsFile = os.path.join(outputDir, "buffer_actions.h5py")
     rewardsFile = os.path.join(outputDir, "buffer_rewards.h5py")
     nextStatesFile = os.path.join(outputDir, "buffer_nextStates.h5py")
     donesFile = os.path.join(outputDir, "buffer_dones.h5py")
+    # Create file objects
     fs = h5py.File(statesFile, "w")
     fa = h5py.File(actionsFile, "w")
     fr = h5py.File(rewardsFile, "w")
     fn = h5py.File(nextStatesFile, "w")
     fd = h5py.File(donesFile, "w")
+    # Initialize datasets
     m = len(memory.buffer)
-    statesShape = list(memory.buffer[0].state.numpy().shape) + [m,] 
+    statesShape = list(memory.buffer[0].state.numpy().shape) + [
+        m,
+    ]
     statesDs = fs.create_dataset("states", statesShape, dtype=np.float)
     actionsDs = fa.create_dataset("actions", m, dtype=np.int)
     rewardsDs = fr.create_dataset("rewards", m, dtype=np.float)
     nextStatesDs = fn.create_dataset("nextStates", statesShape, dtype=np.float)
     donesDs = fd.create_dataset("dones", m, dtype=np.int)
+    # Write data
     for i, experience in enumerate(memory.buffer):
-        statesDs[:,:,:,i] = experience.state.numpy()
+        statesDs[:, :, :, i] = experience.state.numpy()
         actionsDs[i] = experience.action
         rewardsDs[i] = experience.reward
-        nextStatesDs[:,:,:,i] = experience.nextState.numpy()
+        nextStatesDs[:, :, :, i] = experience.nextState.numpy()
         donesDs[i] = experience.done
+    # Close files
+    fs.close()
+    fa.close()
+    fr.close()
+    fn.close()
+    fd.close()
