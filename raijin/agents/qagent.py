@@ -27,7 +27,9 @@ class QAgent(BaseAgent):
     # -----
     # constructor
     # -----
-    def __init__(self, env: Env, pipeline: BasePipeline, params: DictConfig) -> None:
+    def __init__(
+        self, env: Env, pipeline: BasePipeline, params: DictConfig
+    ) -> None:
         self.env = env
         self.pipeline = pipeline
         self.epsilonStart = params.epsilonStart
@@ -49,7 +51,7 @@ class QAgent(BaseAgent):
     # -----
     # choose_action
     # -----
-    def choose_action(self, actionChoiceType: str, net: torch.nn) -> None:
+    def choose_action(self, actionChoiceType: str, net: torch.nn) -> int:
         """
         Implements epsilon-greedy action selection strategy.
 
@@ -89,7 +91,7 @@ class QAgent(BaseAgent):
     # -----
     # step
     # -----
-    def step(self, actionChoiceType: str, net: torch.nn) -> None:
+    def step(self, actionChoiceType: str, net: torch.nn.Module) -> Experience:
         """
         Transition from one game frame to the next.
         """
@@ -106,7 +108,7 @@ class QAgent(BaseAgent):
     # -----
     # state_dict
     # -----
-    def state_dict(self) -> None:
+    def state_dict(self) -> dict:
         stateDict = {
             "envState": self.env.clone_full_state(),
             "pipeline": self.pipeline.state_dict(),

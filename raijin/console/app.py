@@ -1,3 +1,5 @@
+from typing import List
+
 from cleo import Application
 
 from raijin.commands.train import TrainCommand
@@ -19,7 +21,7 @@ class RaijinApplication(Application):
     # -----
     # _get_commands
     # -----
-    def _get_commands(self) -> None:
+    def _get_commands(self) -> List:
         commandList = [
             TrainCommand,
         ]

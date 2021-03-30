@@ -2,6 +2,7 @@ from abc import ABC
 from abc import abstractmethod
 
 import numpy as np
+import torch
 
 from raijin.utilities.register import register_object
 
@@ -21,7 +22,7 @@ class BasePipeline(ABC):
     # processs
     # -----
     @abstractmethod
-    def process():
+    def process(self) -> torch.Tensor:
         """
         Performs any desired image processing on the given game frame.
         """
@@ -31,7 +32,7 @@ class BasePipeline(ABC):
     # state_dict
     # -----
     @abstractmethod
-    def state_dict():
+    def state_dict(self) -> dict:
         pass
 
     # -----

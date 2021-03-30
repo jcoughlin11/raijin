@@ -29,7 +29,7 @@ class BaseAgent(ABC):
     # reset
     # -----
     @abstractmethod
-    def reset():
+    def reset(self) -> None:
         """
         Reverts the environment back to its initial state.
         """
@@ -39,7 +39,7 @@ class BaseAgent(ABC):
     # choose_action
     # -----
     @abstractmethod
-    def choose_action():
+    def choose_action(self) -> int:
         """
         Selects an action to take.
         """
@@ -49,7 +49,7 @@ class BaseAgent(ABC):
     # step
     # -----
     @abstractmethod
-    def step():
+    def step(self) -> None:
         """
         Transitions to the next game state.
         """
@@ -59,7 +59,7 @@ class BaseAgent(ABC):
     # state_dict
     # -----
     @abstractmethod
-    def state_dict():
+    def state_dict(self) -> dict:
         """
         Returns a dictionary containing any stateful parameters. The
         state dictionary is used when saving a checkpoint.

@@ -19,7 +19,7 @@ class BaseTrainer(ABC):
     # training_step
     # -----
     @abstractmethod
-    def training_step():
+    def training_step(self) -> None:
         """
         Performs one iteration of the training loop.
         """
@@ -29,7 +29,7 @@ class BaseTrainer(ABC):
     # train
     # -----
     @abstractmethod
-    def train():
+    def train(self) -> None:
         """
         Contains the training loop for one full episode.
         """
@@ -39,7 +39,7 @@ class BaseTrainer(ABC):
     # learn
     # -----
     @abstractmethod
-    def learn():
+    def learn(self) -> None:
         """
         Updates the weights in the network(s).
         """
@@ -49,7 +49,7 @@ class BaseTrainer(ABC):
     # state_dict
     # -----
     @abstractmethod
-    def state_dict():
+    def state_dict(self) -> dict:
         pass
 
     # -----

@@ -24,6 +24,6 @@ def get_chkpt_num(outputDir: str) -> int:
             chkpts.append(c)
     if len(chkpts) == 0:
         return -1
-    chkpts = [int(c.split("_")[1]) for c in chkpts]
-    chkpts = sorted(chkpts, reverse=True)
-    return chkpts[0]
+    chkptNums = [int(c.split("_")[1]) for c in chkpts]
+    chkptNums = sorted(chkpts, reverse=True)
+    return chkptNums[0]

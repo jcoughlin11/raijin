@@ -29,7 +29,7 @@ class BaseNetwork(ABC, torch.nn.Module):
     # forward
     # -----
     @abstractmethod
-    def forward():
+    def forward(self) -> torch.Tensor:
         """
         Defines a forward pass through the network.
         """
@@ -38,7 +38,9 @@ class BaseNetwork(ABC, torch.nn.Module):
     # -----
     # get_conv_out_shape
     # -----
-    def get_conv_out_shape(self, H_in: int, W_in: int, convLayer: torch.nn.Conv2d) -> np.ndarray:
+    def get_conv_out_shape(
+        self, H_in: int, W_in: int, convLayer: torch.nn.Conv2d
+    ) -> np.ndarray:
         """
         Calculates the shape of the tensor output by the given convolutional
         layer. Does NOT include the batch dimension.
@@ -53,4 +55,4 @@ class BaseNetwork(ABC, torch.nn.Module):
         # These two calcs can be vectorized
         H_out = (h + 2 * pad[0] - dil[0] * (ks[0] - 1) - 1) / s[0] + 1
         W_out = (w + 2 * pad[1] - dil[1] * (ks[1] - 1) - 1) / s[1] + 1
-        return np.array([convLayer.out_channels, H_out, W_out], dtype=np.int)
+        return np.array([convLayer.out_channels, H_out, W_out], dtype=np.int32)

@@ -1,5 +1,6 @@
 from abc import ABC
 from abc import abstractmethod
+from typing import Tuple
 
 from raijin.utilities.register import register_object
 
@@ -19,7 +20,7 @@ class BaseMemory(ABC):
     # add
     # -----
     @abstractmethod
-    def add():
+    def add(self) -> None:
         """
         Puts a new experience into the memory buffer.
         """
@@ -29,7 +30,7 @@ class BaseMemory(ABC):
     # sample
     # -----
     @abstractmethod
-    def sample():
+    def sample(self) -> Tuple:
         """
         Extracts a subset of experiences from the buffer.
         """
@@ -39,5 +40,5 @@ class BaseMemory(ABC):
     # state_dict
     # -----
     @abstractmethod
-    def state_dict():
+    def state_dict(self) -> dict:
         pass

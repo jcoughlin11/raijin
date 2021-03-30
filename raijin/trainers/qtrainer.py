@@ -19,7 +19,15 @@ class QTrainer(BaseTrainer):
     # -----
     # constructor
     # -----
-    def __init__(self, agent: BaseAgent, lossFunctions: List, memory: BaseMemory, nets: List, optimizers: List, params: DictConfig) -> None:
+    def __init__(
+        self,
+        agent: BaseAgent,
+        lossFunctions: List,
+        memory: BaseMemory,
+        nets: List,
+        optimizers: List,
+        params: DictConfig,
+    ) -> None:
         self.agent = agent
         self.loss_function = lossFunctions[0]
         self.memory = memory
@@ -120,7 +128,9 @@ class QTrainer(BaseTrainer):
     # -----
     # _get_beliefs
     # -----
-    def _get_beliefs(self, states: torch.Tensor, actions: torch.Tensor) torch.Tensor:
+    def _get_beliefs(
+        self, states: torch.Tensor, actions: torch.Tensor
+    ) -> torch.Tensor:
         """
         Gets what the network believes to be the best actions for each
         given state. The strength of this belief is given by the
@@ -145,7 +155,12 @@ class QTrainer(BaseTrainer):
     # -----
     # _get_targets
     # -----
-    def _get_targets(self, nextStates: torch.Tensor, dones: torch.Tensor, rewards: torch.Tensor) -> torch.Tensor:
+    def _get_targets(
+        self,
+        nextStates: torch.Tensor,
+        dones: torch.Tensor,
+        rewards: torch.Tensor,
+    ) -> torch.Tensor:
         """
         Uses the Bellman equation along with the network in order to
         bootstrap the "actual" best action for a given state.

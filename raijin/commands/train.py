@@ -43,7 +43,7 @@ class TrainCommand(Command):
         params = read_parameter_file(self.argument("paramFile"))
         trainer = get_trainer(params)
         progBar = self._get_progress_bar(trainer.nEpisodes)
-        msg = f"<info>Episode Reward</info>: {trainer.episodeReward}" 
+        msg = f"<info>Episode Reward</info>: {trainer.episodeReward}"
         progBar.set_message(msg)
         trainer.pre_train()
         return (params, trainer, progBar)
@@ -51,7 +51,9 @@ class TrainCommand(Command):
     # -----
     # _train
     # -----
-    def _train(self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar) -> Tuple:
+    def _train(
+        self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar
+    ) -> Tuple:
         progBar.start()
         for episode in range(trainer.nEpisodes):
             trainer.train_step_start()
@@ -68,7 +70,9 @@ class TrainCommand(Command):
     # -----
     # _cleanup
     # -----
-    def _cleanup(self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar) -> None:
+    def _cleanup(
+        self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar
+    ) -> None:
         trainer.post_train()
         save_final_model(trainer, params.io.checkpointBase, params.io.outputDir)
 

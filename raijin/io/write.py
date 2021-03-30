@@ -17,7 +17,9 @@ from raijin.utilities.managers import get_state_dicts
 # ============================================
 #               save_checkpoint
 # ============================================
-def save_checkpoint(trainer: BaseTrainer, episodeNum: int, params: DictConfig) -> None:
+def save_checkpoint(
+    trainer: BaseTrainer, episodeNum: int, params: DictConfig
+) -> None:
     """
     Saves the state of the trainer in a checkpoint directory.
 
@@ -58,7 +60,9 @@ def save_checkpoint(trainer: BaseTrainer, episodeNum: int, params: DictConfig) -
 # ============================================
 #              save_final_model
 # ============================================
-def save_final_model(trainer: BaseTrainer, baseName: str, outputDir: str) -> None:
+def save_final_model(
+    trainer: BaseTrainer, baseName: str, outputDir: str
+) -> None:
     """
     Saves the network parameters once training is finished.
 
@@ -99,11 +103,11 @@ def save_memory(memory: BaseMemory, outputDir: str) -> None:
     statesShape = list(memory.buffer[0].state.numpy().shape) + [
         m,
     ]
-    statesDs = fs.create_dataset("states", statesShape, dtype=np.float)
-    actionsDs = fa.create_dataset("actions", m, dtype=np.int)
-    rewardsDs = fr.create_dataset("rewards", m, dtype=np.float)
-    nextStatesDs = fn.create_dataset("nextStates", statesShape, dtype=np.float)
-    donesDs = fd.create_dataset("dones", m, dtype=np.int)
+    statesDs = fs.create_dataset("states", statesShape, dtype=np.float32)
+    actionsDs = fa.create_dataset("actions", m, dtype=np.int32)
+    rewardsDs = fr.create_dataset("rewards", m, dtype=np.float32)
+    nextStatesDs = fn.create_dataset("nextStates", statesShape, dtype=np.float32)
+    donesDs = fd.create_dataset("dones", m, dtype=np.int32)
     # Write data
     for i, experience in enumerate(memory.buffer):
         statesDs[:, :, :, i] = experience.state.numpy()
