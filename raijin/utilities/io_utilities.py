@@ -22,7 +22,8 @@ def get_chkpt_num(outputDir):
             os.path.join(outputDir, c)
         ):
             chkpts.append(c)
-    chkpts = sorted(chkpts, reverse=True)
     if len(chkpts) == 0:
         return -1
-    return int(chkpts[0].split("_")[1])
+    chkpts = [int(c.split("_")[1]) for c in chkpts]
+    chkpts = sorted(chkpts, reverse=True)
+    return chkpts[0]

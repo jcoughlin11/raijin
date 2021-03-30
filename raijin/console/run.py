@@ -13,4 +13,3 @@ warnings.filterwarnings("ignore")
 # ============================================
 def run() -> None:
     RaijinApplication().run()
-    print("Done.")

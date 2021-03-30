@@ -22,37 +22,59 @@ class TrainCommand(Command):
     # handle
     # -----
     def handle(self) -> None:
+        self.line("<warning>Initializing...</warning>")
+        params, trainer, progBar = self._initialize()
         self.line("<warning>Training...</warning>")
         self.line("\n")
+        params, trainer, progBar = self._train(params, trainer, progBar)
+        self.line("\n")
+        self.line("<warning>Cleaning up...</warning>")
+        self._cleanup(params, trainer, progBar)
+        self.line("<warning>Done.</warning>")
+
+    # -----
+    # _initialize
+    # -----
+    def _initialize(self):
         params = read_parameter_file(self.argument("paramFile"))
         trainer = get_trainer(params)
-        progressBar = self._get_progress_bar(trainer.nEpisodes)
-        progressBar.set_message(
-            f"<info>Episode Reward</info>: {trainer.episodeReward}"
-        )
-        progressBar.start()
+        progBar = self._get_progress_bar(trainer.nEpisodes)
+        msg = f"<info>Episode Reward</info>: {trainer.episodeReward}" 
+        progBar.set_message(msg)
         trainer.pre_train()
+        return params, trainer, progBar
+
+    # -----
+    # _train
+    # -----
+    def _train(self, params, trainer, progBar):
+        progBar.start()
         for episode in range(trainer.nEpisodes):
             trainer.train_step_start()
             trainer.train()
-            progressBar.set_message(
-                f"<info>Episode Reward</info>: {trainer.episodeReward}"
-            )
+            msg = f"<info>Episode Reward</info>: {trainer.episodeReward}"
+            progBar.set_message(msg)
             trainer.train_step_end()
-            progressBar.advance()
+            progBar.advance()
             if episode % params.io.checkpointFreq == 0:
                 save_checkpoint(trainer, episode, params)
+        progBar.finish()
+        return params, trainer, progBar
+
+    # -----
+    # _cleanup
+    # -----
+    def _cleanup(self, params, trainer, progBar):
         trainer.post_train()
-        progressBar.finish()
         save_final_model(trainer, params.io.checkpointBase, params.io.outputDir)
 
     # -----
     # _get_progress_bar
     # -----
     def _get_progress_bar(self, nEpisodes: int) -> ProgressBar:
-        progressBar = self.progress_bar(nEpisodes)
+        progBar = self.progress_bar(nEpisodes)
         formatStr = "\t<info>Episode</info>: %current%/%max%"
         formatStr += "\n\t<info>Elapsed Time</info>: %elapsed%"
         formatStr += "\n\t%message%"
-        progressBar.set_format(formatStr)
-        return progressBar
+        progBar.set_format(formatStr)
+        return progBar

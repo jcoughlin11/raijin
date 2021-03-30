@@ -8,7 +8,7 @@ import torch
 import yaml
 
 from raijin.memory.base_memory import BaseMemory
-from raijin.trainers.base_trainer BaseTrainer
+from raijin.trainers.base_trainer import BaseTrainer
 from raijin.utilities.io_utilities import get_chkpt_num
 from raijin.utilities.io_utilities import sanitize_path
 from raijin.utilities.managers import get_state_dicts
