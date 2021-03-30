@@ -1,4 +1,5 @@
 from cleo import Command
+from clikit.ui.components.progress_bar import ProgressBar
 
 from raijin.io.read import read_parameter_file
 from raijin.io.write import save_checkpoint
@@ -20,7 +21,7 @@ class TrainCommand(Command):
     # -----
     # handle
     # -----
-    def handle(self):
+    def handle(self) -> None:
         self.line("<warning>Training...</warning>")
         self.line("\n")
         params = read_parameter_file(self.argument("paramFile"))
@@ -48,7 +49,7 @@ class TrainCommand(Command):
     # -----
     # _get_progress_bar
     # -----
-    def _get_progress_bar(self, nEpisodes):
+    def _get_progress_bar(self, nEpisodes: int) -> ProgressBar:
         progressBar = self.progress_bar(nEpisodes)
         formatStr = "\t<info>Episode</info>: %current%/%max%"
         formatStr += "\n\t<info>Elapsed Time</info>: %elapsed%"

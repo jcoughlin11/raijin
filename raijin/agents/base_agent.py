@@ -21,7 +21,7 @@ class BaseAgent(ABC):
     # -----
     # subclass hook
     # -----
-    def __init_subclass__(cls, **kwargs):
+    def __init_subclass__(cls, **kwargs) -> None:
         super().__init_subclass__(**kwargs)
         register_object(cls)
 

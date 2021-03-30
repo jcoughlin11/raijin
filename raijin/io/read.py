@@ -6,7 +6,7 @@ from raijin.utilities.io_utilities import sanitize_path
 # ============================================
 #             read_parameter_file
 # ============================================
-def read_parameter_file(paramFile):
+def read_parameter_file(paramFile: str) -> None:
     paramFile = sanitize_path(paramFile)
     params = config.load(paramFile)
     return params

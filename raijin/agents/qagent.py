@@ -1,7 +1,10 @@
 import numpy as np
+from gym import Env
+from omegaconf.dictconfig import DictConfig
 import torch
 
 from raijin.memory.experience import Experience
+from raijin.pipelines.base_pipeline import BasePipeline
 
 from .base_agent import BaseAgent
 
@@ -24,7 +27,7 @@ class QAgent(BaseAgent):
     # -----
     # constructor
     # -----
-    def __init__(self, env, pipeline, params):
+    def __init__(self, env: Env, pipeline: BasePipeline, params: DictConfig) -> None:
         self.env = env
         self.pipeline = pipeline
         self.epsilonStart = params.epsilonStart
@@ -36,7 +39,7 @@ class QAgent(BaseAgent):
     # -----
     # reset
     # -----
-    def reset(self):
+    def reset(self) -> None:
         """
         Reverts the environment back to its initial state.
         """
@@ -46,7 +49,7 @@ class QAgent(BaseAgent):
     # -----
     # choose_action
     # -----
-    def choose_action(self, actionChoiceType, net):
+    def choose_action(self, actionChoiceType: str, net: torch.nn) -> None:
         """
         Implements epsilon-greedy action selection strategy.
 
@@ -86,7 +89,7 @@ class QAgent(BaseAgent):
     # -----
     # step
     # -----
-    def step(self, actionChoiceType, net):
+    def step(self, actionChoiceType: str, net: torch.nn) -> None:
         """
         Transition from one game frame to the next.
         """
@@ -103,7 +106,7 @@ class QAgent(BaseAgent):
     # -----
     # state_dict
     # -----
-    def state_dict(self):
+    def state_dict(self) -> None:
         stateDict = {
             "envState": self.env.clone_full_state(),
             "pipeline": self.pipeline.state_dict(),

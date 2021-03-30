@@ -3,9 +3,12 @@ import os
 import h5py
 import numpy as np
 from omegaconf import OmegaConf as config
+from omegaconf.dictconfig import DictConfig
 import torch
 import yaml
 
+from raijin.memory.base_memory import BaseMemory
+from raijin.trainers.base_trainer BaseTrainer
 from raijin.utilities.io_utilities import get_chkpt_num
 from raijin.utilities.io_utilities import sanitize_path
 from raijin.utilities.managers import get_state_dicts
@@ -14,7 +17,7 @@ from raijin.utilities.managers import get_state_dicts
 # ============================================
 #               save_checkpoint
 # ============================================
-def save_checkpoint(trainer, episodeNum, params):
+def save_checkpoint(trainer: BaseTrainer, episodeNum: int, params: DictConfig) -> None:
     """
     Saves the state of the trainer in a checkpoint directory.
 
@@ -55,7 +58,7 @@ def save_checkpoint(trainer, episodeNum, params):
 # ============================================
 #              save_final_model
 # ============================================
-def save_final_model(trainer, baseName, outputDir):
+def save_final_model(trainer: BaseTrainer, baseName: str, outputDir: str) -> None:
     """
     Saves the network parameters once training is finished.
 
@@ -71,7 +74,7 @@ def save_final_model(trainer, baseName, outputDir):
 # ============================================
 #                save_memory
 # ============================================
-def save_memory(memory, outputDir):
+def save_memory(memory: BaseMemory, outputDir: str) -> None:
     """
     Saves the memory buffer.
 

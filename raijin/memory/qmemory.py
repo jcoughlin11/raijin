@@ -1,9 +1,12 @@
 from collections import deque
+from typing import Tuple
 
 import numpy as np
+from omegaconf.dictconfig import DictConfig
 import torch
 
 from .base_memory import BaseMemory
+from .experience import Experience
 
 
 # ============================================
@@ -24,20 +27,20 @@ class QMemory(BaseMemory):
     # -----
     # constructor
     # -----
-    def __init__(self, params):
+    def __init__(self, params: DictConfig) -> None:
         self.capacity = params.capacity
         self.buffer = deque(maxlen=self.capacity)
 
     # -----
     # add
     # -----
-    def add(self, experience):
+    def add(self, experience: Experience) -> None:
         self.buffer.append(experience)
 
     # -----
     # sample
     # -----
-    def sample(self, batchSize):
+    def sample(self, batchSize: int) -> Tuple:
         # Choose which experiences to grab
         indices = np.random.choice(len(self.buffer), batchSize, replace=False)
         # Extract those experiences from the buffer
@@ -47,7 +50,7 @@ class QMemory(BaseMemory):
     # -----
     # _process_batch
     # -----
-    def _process_batch(self, batch, batchSize):
+    def _process_batch(self, batch, batchSize: int) -> Tuple:
         """
         Converts the components of the experiences within batch to
         tensors of the appropriate shape and type.

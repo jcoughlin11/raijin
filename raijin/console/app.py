@@ -11,7 +11,7 @@ class RaijinApplication(Application):
     # -----
     # constructor
     # -----
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(config=ApplicationConfig())
         for command in self._get_commands():
             self.add(command())
@@ -19,7 +19,7 @@ class RaijinApplication(Application):
     # -----
     # _get_commands
     # -----
-    def _get_commands(self):
+    def _get_commands(self) -> None:
         commandList = [
             TrainCommand,
         ]
