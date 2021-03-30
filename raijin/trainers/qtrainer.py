@@ -1,4 +1,11 @@
+from typing import List
+from typing import Tuple
+
+from omegaconf.dictconfig import DictConfig
 import torch
+
+from raijin.agents.base_agent import BaseAgent
+from raijin.memory.base_memory import BaseMemory
 
 from .base_trainer import BaseTrainer
 
@@ -12,7 +19,7 @@ class QTrainer(BaseTrainer):
     # -----
     # constructor
     # -----
-    def __init__(self, agent, lossFunctions, memory, nets, optimizers, params):
+    def __init__(self, agent: BaseAgent, lossFunctions: List, memory: BaseMemory, nets: List, optimizers: List, params: DictConfig) -> None:
         self.agent = agent
         self.loss_function = lossFunctions[0]
         self.memory = memory
@@ -30,13 +37,13 @@ class QTrainer(BaseTrainer):
     # -----
     # pre_train
     # -----
-    def pre_train(self):
+    def pre_train(self) -> None:
         self._pre_populate()
 
     # -----
     # training_step
     # -----
-    def training_step(self, actionChoiceType):
+    def training_step(self, actionChoiceType: str) -> None:
         experience = self.agent.step(actionChoiceType, self.net)
         self.episodeReward += experience.reward
         self.memory.add(experience)
@@ -45,7 +52,7 @@ class QTrainer(BaseTrainer):
     # -----
     # train
     # -----
-    def train(self):
+    def train(self) -> None:
         self.agent.reset()
         for episodeStep in range(self.episodeLength):
             self.training_step("train")
@@ -57,7 +64,7 @@ class QTrainer(BaseTrainer):
     # -----
     # train_step_end
     # -----
-    def train_step_end(self):
+    def train_step_end(self) -> None:
         self.episodeOver = False
         self.episodeRewards.append(self.episodeReward)
         self.episodeReward = 0.0
@@ -65,7 +72,7 @@ class QTrainer(BaseTrainer):
     # -----
     # learn
     # -----
-    def learn(self, batch):
+    def learn(self, batch: Tuple) -> None:
         """
         Implements the Deep-Q Learning algorithm from
         [Mnih et al. 2013][1].
@@ -100,7 +107,7 @@ class QTrainer(BaseTrainer):
     # -----
     # _pre_populate
     # -----
-    def _pre_populate(self):
+    def _pre_populate(self) -> None:
         """
         Fills the initially empty memory buffer so that we are not
         trying to sample from an empty or under-filled buffer at
@@ -113,7 +120,7 @@ class QTrainer(BaseTrainer):
     # -----
     # _get_beliefs
     # -----
-    def _get_beliefs(self, states, actions):
+    def _get_beliefs(self, states: torch.Tensor, actions: torch.Tensor) torch.Tensor:
         """
         Gets what the network believes to be the best actions for each
         given state. The strength of this belief is given by the
@@ -138,7 +145,7 @@ class QTrainer(BaseTrainer):
     # -----
     # _get_targets
     # -----
-    def _get_targets(self, nextStates, dones, rewards):
+    def _get_targets(self, nextStates: torch.Tensor, dones: torch.Tensor, rewards: torch.Tensor) -> torch.Tensor:
         """
         Uses the Bellman equation along with the network in order to
         bootstrap the "actual" best action for a given state.
@@ -159,5 +166,5 @@ class QTrainer(BaseTrainer):
     # -----
     # state_dict
     # -----
-    def state_dict(self):
+    def state_dict(self) -> dict:
         return {}

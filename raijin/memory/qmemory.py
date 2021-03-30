@@ -78,5 +78,5 @@ class QMemory(BaseMemory):
     # -----
     # state_dict
     # -----
-    def state_dict(self):
+    def state_dict(self) -> dict:
         return {}

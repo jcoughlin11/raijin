@@ -6,7 +6,7 @@ from clikit.api.formatter import Style
 #              ApplicationConfig
 # ============================================
 class ApplicationConfig(BaseApplicationConfig):
-    def configure(self):
+    def configure(self) -> None:
         super().configure()
         self.add_style(Style("info").fg("cyan"))
         self.add_style(Style("error").fg("red").bold())

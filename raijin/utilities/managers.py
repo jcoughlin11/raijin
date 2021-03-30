@@ -1,12 +1,16 @@
-import gym
+from typing import List
 
+import gym
+from omegaconf.dictconfig import DictConfig
+
+from raijin.trainers.base_trainer import BaseTrainer
 from raijin.utilities.register import registry
 
 
 # ============================================
 #                 get_trainer
 # ============================================
-def get_trainer(params):
+def get_trainer(params: DictConfig) -> BaseTrainer:
     env = get_env(params.env.name)
     pipeline = registry[params.pipeline.name](params.pipeline)
     agent = registry[params.agent.name](env, pipeline, params.agent)
@@ -23,7 +27,7 @@ def get_trainer(params):
 # ============================================
 #                   get_env
 # ============================================
-def get_env(envName):
+def get_env(envName: str) -> gym.Env:
     env = gym.make(envName)
     return env
 
@@ -31,7 +35,7 @@ def get_env(envName):
 # ============================================
 #                  get_nets
 # ============================================
-def get_nets(params, inChannels, nActions):
+def get_nets(params: DictConfig, inChannels: int, nActions: int) -> List:
     nets = []
     for _, netParams in params.items():
         nets.append(
@@ -43,7 +47,7 @@ def get_nets(params, inChannels, nActions):
 # ============================================
 #               get_optimizers
 # ============================================
-def get_optimizers(params, nets):
+def get_optimizers(params: DictConfig, nets: List) -> List:
     opts = []
     for i, (_, optParams) in enumerate(params.items()):
         cls = registry[optParams.name]
@@ -55,7 +59,7 @@ def get_optimizers(params, nets):
 # ============================================
 #             get_loss_functions
 # ============================================
-def get_loss_functions(params):
+def get_loss_functions(params: DictConfig) -> List:
     lossFunctions = []
     for _, lossParams in params.items():
         # If name is the only parameter
@@ -71,7 +75,7 @@ def get_loss_functions(params):
 # ============================================
 #              get_state_dicts
 # ============================================
-def get_state_dicts(manager):
+def get_state_dicts(manager: BaseTrainer) -> dict:
     stateDicts = {}
     for attrVal in manager.__dict__.values():
         if hasattr(attrVal, "state_dict"):

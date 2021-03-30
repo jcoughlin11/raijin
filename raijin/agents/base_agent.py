@@ -29,7 +29,7 @@ class BaseAgent(ABC):
     # reset
     # -----
     @abstractmethod
-    def reset(self):
+    def reset():
         """
         Reverts the environment back to its initial state.
         """
@@ -39,7 +39,7 @@ class BaseAgent(ABC):
     # choose_action
     # -----
     @abstractmethod
-    def choose_action(self):
+    def choose_action():
         """
         Selects an action to take.
         """
@@ -49,7 +49,7 @@ class BaseAgent(ABC):
     # step
     # -----
     @abstractmethod
-    def step(self):
+    def step():
         """
         Transitions to the next game state.
         """

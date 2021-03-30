@@ -55,7 +55,7 @@ class BaseTrainer(ABC):
     # -----
     # pre_train
     # -----
-    def pre_train(self):
+    def pre_train(self) -> None:
         """
         Called before the start of training.
         """
@@ -64,7 +64,7 @@ class BaseTrainer(ABC):
     # -----
     # train_step_start
     # -----
-    def train_step_start(self):
+    def train_step_start(self) -> None:
         """
         Called at the start of each episode.
         """
@@ -73,7 +73,7 @@ class BaseTrainer(ABC):
     # -----
     # train_step_end
     # -----
-    def train_step_end(self):
+    def train_step_end(self) -> None:
         """
         Called at the end of each episode.
         """
@@ -82,7 +82,7 @@ class BaseTrainer(ABC):
     # -----
     # post_train
     # -----
-    def post_train(self):
+    def post_train(self) -> None:
         """
         Called after training.
         """

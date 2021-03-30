@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 
 from .base_network import BaseNetwork
@@ -18,7 +19,7 @@ class QNetwork(BaseNetwork):
     # -----
     # constructor
     # -----
-    def __init__(self, inChannels, nActions, **kwargs):
+    def __init__(self, inChannels: int, nActions: int, **kwargs: dict) -> None:
         super().__init__()
         # First convolutional layer
         conv1 = nn.Conv2d(
@@ -51,5 +52,5 @@ class QNetwork(BaseNetwork):
     # -----
     # forward
     # -----
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.net(x)

@@ -48,5 +48,5 @@ registry.update(optimizerRegister)
 # ============================================
 #               register_object
 # ============================================
-def register_object(cls):
+def register_object(cls) -> None:
     registry[cls.__name__] = cls

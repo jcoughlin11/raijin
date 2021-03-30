@@ -21,7 +21,7 @@ class BaseNetwork(ABC, torch.nn.Module):
     # -----
     # constructor
     # -----
-    def __init__(self):
+    def __init__(self) -> None:
         # I think this works with multiple parents? Check.
         super().__init__()
 
@@ -38,7 +38,7 @@ class BaseNetwork(ABC, torch.nn.Module):
     # -----
     # get_conv_out_shape
     # -----
-    def get_conv_out_shape(self, H_in, W_in, convLayer):
+    def get_conv_out_shape(self, H_in: int, W_in: int, convLayer: torch.nn.Conv2d) -> np.ndarray:
         """
         Calculates the shape of the tensor output by the given convolutional
         layer. Does NOT include the batch dimension.

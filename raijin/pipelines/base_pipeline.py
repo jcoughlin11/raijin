@@ -1,6 +1,8 @@
 from abc import ABC
 from abc import abstractmethod
 
+import numpy as np
+
 from raijin.utilities.register import register_object
 
 
@@ -35,7 +37,7 @@ class BasePipeline(ABC):
     # -----
     # _reshape_frame
     # -----
-    def _reshape_frame(self, frame):
+    def _reshape_frame(self, frame: np.ndarray) -> np.ndarray:
         """
         The environment produces an array of shape (H, W, C), but
         pytorch needs the channels to be first.

@@ -1,5 +1,7 @@
 from collections import deque
 
+import numpy as np
+from omegaconf.dictconfig import DictConfig
 import torch
 import torchvision.transforms.functional as tf
 
@@ -15,7 +17,7 @@ class QPipeline(BasePipeline):
     # -----
     # constructor
     # -----
-    def __init__(self, params):
+    def __init__(self, params: DictConfig) -> None:
         self.normValue = params.normValue
         self.traceLen = params.traceLen
         self.offsetHeight = params.offsetHeight
@@ -27,7 +29,7 @@ class QPipeline(BasePipeline):
     # -----
     # normalize_frame
     # -----
-    def normalize_frame(self, frame):
+    def normalize_frame(self, frame: torch.Tensor) -> torch.Tensor:
         """
         Rescales each rgb value to be between 0 and 1.
 
@@ -40,7 +42,7 @@ class QPipeline(BasePipeline):
     # -----
     # grayscale
     # -----
-    def grayscale(self, frame):
+    def grayscale(self, frame: torch.Tensor) -> torch.Tensor:
         """
         Converts the image to have just one channel.
 
@@ -52,7 +54,7 @@ class QPipeline(BasePipeline):
     # -----
     # crop
     # -----
-    def crop(self, frame):
+    def crop(self, frame: torch.Tensor) -> torch.Tensor:
         """
         Cuts out the unnecessary parts of the image.
 
@@ -70,7 +72,7 @@ class QPipeline(BasePipeline):
     # -----
     # stack
     # -----
-    def stack(self, frame, newEpisode):
+    def stack(self, frame: torch.Tensor, newEpisode: bool) -> torch.Tensor:
         """
         Adds the given frame to the top of a pile containing the
         preceding frames.
@@ -90,7 +92,7 @@ class QPipeline(BasePipeline):
     # -----
     # process
     # -----
-    def process(self, frame, newEpisode):
+    def process(self, frame: np.ndarray, newEpisode: bool) -> torch.Tensor:
         frame = self._reshape_frame(frame)
         frame = torch.from_numpy(frame)
         frame = self.normalize_frame(frame)
@@ -102,5 +104,5 @@ class QPipeline(BasePipeline):
     # -----
     # state_dict
     # -----
-    def state_dict(self):
+    def state_dict(self) -> dict:
         return {"frameStack": self.frameStack}

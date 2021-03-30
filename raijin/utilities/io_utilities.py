@@ -4,7 +4,7 @@ import os
 # ============================================
 #               sanitize_path
 # ============================================
-def sanitize_path(path):
+def sanitize_path(path: str) -> str:
     path = os.path.expandvars(path)
     path = os.path.expanduser(path)
     return os.path.abspath(path)
@@ -13,7 +13,7 @@ def sanitize_path(path):
 # ============================================
 #               get_chkpt_num
 # ============================================
-def get_chkpt_num(outputDir):
+def get_chkpt_num(outputDir: str) -> int:
     if not os.path.isdir(outputDir):
         return -1
     chkpts = []

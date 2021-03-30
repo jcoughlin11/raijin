@@ -1,9 +1,13 @@
+from typing import Tuple
+
 from cleo import Command
 from clikit.ui.components.progress_bar import ProgressBar
+from omegaconf.dictconfig import DictConfig
 
 from raijin.io.read import read_parameter_file
 from raijin.io.write import save_checkpoint
 from raijin.io.write import save_final_model
+from raijin.trainers.base_trainer import BaseTrainer
 from raijin.utilities.managers import get_trainer
 
 
@@ -35,19 +39,19 @@ class TrainCommand(Command):
     # -----
     # _initialize
     # -----
-    def _initialize(self):
+    def _initialize(self) -> Tuple:
         params = read_parameter_file(self.argument("paramFile"))
         trainer = get_trainer(params)
         progBar = self._get_progress_bar(trainer.nEpisodes)
         msg = f"<info>Episode Reward</info>: {trainer.episodeReward}" 
         progBar.set_message(msg)
         trainer.pre_train()
-        return params, trainer, progBar
+        return (params, trainer, progBar)
 
     # -----
     # _train
     # -----
-    def _train(self, params, trainer, progBar):
+    def _train(self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar) -> Tuple:
         progBar.start()
         for episode in range(trainer.nEpisodes):
             trainer.train_step_start()
@@ -59,12 +63,12 @@ class TrainCommand(Command):
             if episode % params.io.checkpointFreq == 0:
                 save_checkpoint(trainer, episode, params)
         progBar.finish()
-        return params, trainer, progBar
+        return (params, trainer, progBar)
 
     # -----
     # _cleanup
     # -----
-    def _cleanup(self, params, trainer, progBar):
+    def _cleanup(self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar) -> None:
         trainer.post_train()
         save_final_model(trainer, params.io.checkpointBase, params.io.outputDir)
 
