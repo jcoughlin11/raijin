@@ -55,7 +55,7 @@ class TrainCommand(Command):
         self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar
     ) -> Tuple:
         progBar.start()
-        for episode in range(trainer.nEpisodes):
+        for trainer.episode in range(trainer.nEpisodes):
             trainer.train_step_start()
             trainer.train()
             msg = f"<info>Episode Reward</info>: {trainer.episodeReward}"
@@ -63,7 +63,7 @@ class TrainCommand(Command):
             trainer.train_step_end()
             progBar.advance()
             if episode % params.io.checkpointFreq == 0:
-                save_checkpoint(trainer, episode, params)
+                save_checkpoint(trainer, params)
         progBar.finish()
         return (params, trainer, progBar)
 

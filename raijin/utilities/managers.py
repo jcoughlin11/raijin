@@ -3,14 +3,14 @@ from typing import List
 import gym
 from omegaconf.dictconfig import DictConfig
 
-from raijin.trainers.base_trainer import BaseTrainer
+from raijin.trainers import base_trainer as  bt
 from raijin.utilities.register import registry
 
 
 # ============================================
 #                 get_trainer
 # ============================================
-def get_trainer(params: DictConfig) -> BaseTrainer:
+def get_trainer(params: DictConfig) -> "bt.BaseTrainer":
     env = get_env(params.env.name)
     pipeline = registry[params.pipeline.name](params.pipeline)
     agent = registry[params.agent.name](env, pipeline, params.agent)
@@ -70,27 +70,3 @@ def get_loss_functions(params: DictConfig) -> List:
             del lossParams.name
             lossFunctions.append(cls(lossParams))
     return lossFunctions
-
-
-# ============================================
-#              get_state_dicts
-# ============================================
-def get_state_dicts(manager: BaseTrainer) -> dict:
-    stateDicts = {}
-    for attrVal in manager.__dict__.values():
-        if hasattr(attrVal, "state_dict"):
-            stateDict = attrVal.state_dict()
-            # The loss and optimizer don't have __name__ attrs, but
-            # the loss has a _get_name method. For the optimizer, we
-            # have to use str(). This prints the parameters, too,
-            # though, which need to be removed
-            if hasattr(attrVal, "__name__"):
-                name = attrVal.__name__
-            elif hasattr(attrVal, "_get_name()"):
-                name = attrVal._get_name()
-            else:
-                name = str(attrVal).split()[0]
-            stateDicts[name] = stateDict
-    if hasattr(manager, "state_dict"):
-        stateDicts[manager.__name__] = manager.state_dict()
-    return stateDicts

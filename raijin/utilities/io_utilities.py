@@ -11,6 +11,19 @@ def sanitize_path(path: str) -> str:
 
 
 # ============================================
+#               get_chkpt_dir
+# ============================================
+def get_chkpt_dir(outputDir: str) -> str:
+    outputDir = sanitize_path(outputDir)
+    # Get the most recent checkpoint number
+    chkptNum = get_chkpt_num(outputDir)
+    # Create new checkpoint directory
+    chkptDir = os.path.join(outputDir, f"checkpoint_{chkptNum+1}")
+    os.makedirs(chkptDir)
+    return chkptDir
+
+
+# ============================================
 #               get_chkpt_num
 # ============================================
 def get_chkpt_num(outputDir: str) -> int:

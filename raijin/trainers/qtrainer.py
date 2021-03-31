@@ -21,9 +21,9 @@ class QTrainer(BaseTrainer):
     # -----
     def __init__(
         self,
-        agent: BaseAgent,
+        agent: "ba.BaseAgent",
         lossFunctions: List,
-        memory: BaseMemory,
+        memory: "bm.BaseMemory",
         nets: List,
         optimizers: List,
         params: DictConfig,
@@ -40,13 +40,15 @@ class QTrainer(BaseTrainer):
         self.discountRate = params.discountRate
         self.episodeOver = False
         self.episodeReward = 0.0
-        self.episodeRewards = []
+        self.episode = 0
+        self.metrics = {}
 
     # -----
     # pre_train
     # -----
     def pre_train(self) -> None:
         self._pre_populate()
+        self._initialize_metrics()
 
     # -----
     # training_step
@@ -74,7 +76,7 @@ class QTrainer(BaseTrainer):
     # -----
     def train_step_end(self) -> None:
         self.episodeOver = False
-        self.episodeRewards.append(self.episodeReward)
+        self.metrics["episodeRewards"].append(self.episodeReward)
         self.episodeReward = 0.0
 
     # -----
@@ -182,4 +184,28 @@ class QTrainer(BaseTrainer):
     # state_dict
     # -----
     def state_dict(self) -> dict:
-        return {}
+        stateDicts = {}
+        # Get the state dicts for each component (agent, network, etc)
+        for attrVal in self.__dict__.values():
+            if hasattr(attrVal, "state_dict"):
+                stateDict = attrVal.state_dict()
+                # The loss and optimizer don't have __name__ attrs, but
+                # the loss has a _get_name method. For the optimizer, we
+                # have to use str(). This prints the parameters, too,
+                # though, which need to be removed
+                if hasattr(attrVal, "__name__"):
+                    name = attrVal.__name__
+                elif hasattr(attrVal, "_get_name()"):
+                    name = attrVal._get_name()
+                else:
+                    name = str(attrVal).split()[0]
+                stateDicts[name] = stateDict
+        # Add trainer's stateful parameters
+        stateDicts.update({"QTrainer" : {"episodeNum" : self.episode}})
+        return stateDicts
+
+    # -----
+    # _initialize_metrics
+    # -----
+    def _initialize_metrics(self):
+        self.metrics["episodeRewards"] = []

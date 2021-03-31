@@ -1,10 +1,10 @@
 import numpy as np
-from gym import Env
+from gym import Env 
 from omegaconf.dictconfig import DictConfig
 import torch
 
 from raijin.memory.experience import Experience
-from raijin.pipelines.base_pipeline import BasePipeline
+from raijin.pipelines import base_pipeline as bp
 
 from .base_agent import BaseAgent
 
@@ -28,7 +28,7 @@ class QAgent(BaseAgent):
     # constructor
     # -----
     def __init__(
-        self, env: Env, pipeline: BasePipeline, params: DictConfig
+        self, env: Env, pipeline: "bp.BasePipeline", params: DictConfig
     ) -> None:
         self.env = env
         self.pipeline = pipeline
@@ -51,7 +51,7 @@ class QAgent(BaseAgent):
     # -----
     # choose_action
     # -----
-    def choose_action(self, actionChoiceType: str, net: torch.nn) -> int:
+    def choose_action(self, actionChoiceType: str, net: torch.nn.Module) -> int:
         """
         Implements epsilon-greedy action selection strategy.
 

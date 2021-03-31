@@ -7,19 +7,16 @@ from omegaconf.dictconfig import DictConfig
 import torch
 import yaml
 
-from raijin.memory.base_memory import BaseMemory
-from raijin.trainers.base_trainer import BaseTrainer
-from raijin.utilities.io_utilities import get_chkpt_num
+from raijin.memory import base_memory as bm
+from raijin.trainers import base_trainer as bt
 from raijin.utilities.io_utilities import sanitize_path
-from raijin.utilities.managers import get_state_dicts
 
 
 # ============================================
 #               save_checkpoint
 # ============================================
 def save_checkpoint(
-    trainer: BaseTrainer, episodeNum: int, params: DictConfig
-) -> None:
+    trainer: "bt.BaseTrainer", params: DictConfig) -> None:
     """
     Saves the state of the trainer in a checkpoint directory.
 
@@ -28,7 +25,7 @@ def save_checkpoint(
 
     Each checkpoint contains:
         * A copy of the parameter file
-        * The memory buffer
+        * The metrics
         * The stateful parameters for:
             * The optimizer
             * The loss
@@ -36,32 +33,44 @@ def save_checkpoint(
             * The trainer
             * The pipeline
             * The agent
+        * The memory buffer
 
     See: https://tinyurl.com/ycyuww2c
     """
-    outputDir = sanitize_path(params.io.outputDir)
-    # Get the most recent checkpoint number
-    chkptNum = get_chkpt_num(outputDir)
-    # Create new checkpoint directory
-    chkptDir = os.path.join(outputDir, f"checkpoint_{chkptNum+1}")
-    os.makedirs(chkptDir)
-    # Get state dictionaries and save
-    stateDicts = get_state_dicts(trainer)
-    stateDicts["episodeNum"] = episodeNum
-    chkptFile = os.path.join(chkptDir, f"{params.io.checkpointBase}.tar")
-    torch.save(stateDicts, chkptFile)
+    # Create checkpoint directory
+    chkptDir = get_chkpt_dir(params.io.outputDir)
     # Save copy of parameter file
-    with open(os.path.join(chkptDir, "params.yaml"), "w") as fd:
-        yaml.safe_dump(config.to_yaml(params), fd)
+    save_params(chkptDir, params)
+    # Save metrics
+    save_metrics(chkptDir, trainer.metrics)
+    # Save state dicts
+    save_state_dicts(trainer, chkptDir, params.io.checkpointBase)
     # Save experience buffer
     save_memory(trainer.memory, chkptDir)
+
+
+# ============================================
+#                 save_params
+# ============================================
+def save_params(outputDir: str, params: DictConfig) -> None:
+    with open(os.path.join(outputDir, "params.yaml"), "w") as fd:
+        yaml.safe_dump(config.to_yaml(params), fd)
+
+
+# ============================================
+#             save_state_dicts
+# ============================================
+def save_state_dicts(trainer: "bt.BaseTrainer", outputDir: str, baseName: str) -> None:
+    stateDict = trainer.state_dict()
+    chkptFile = os.path.join(outputDir, f"{baseName}.tar")
+    torch.save(stateDict, chkptFile)
 
 
 # ============================================
 #              save_final_model
 # ============================================
 def save_final_model(
-    trainer: BaseTrainer, baseName: str, outputDir: str
+    trainer: "bt.BaseTrainer", baseName: str, outputDir: str
 ) -> None:
     """
     Saves the network parameters once training is finished.
@@ -78,7 +87,7 @@ def save_final_model(
 # ============================================
 #                save_memory
 # ============================================
-def save_memory(memory: BaseMemory, outputDir: str) -> None:
+def save_memory(memory: "bm.BaseMemory", outputDir: str) -> None:
     """
     Saves the memory buffer.
 
@@ -121,3 +130,11 @@ def save_memory(memory: BaseMemory, outputDir: str) -> None:
     fr.close()
     fn.close()
     fd.close()
+
+
+# ============================================
+#                save_metrics
+# ============================================
+def save_metrics(outputDir: str, metrics: dict) -> None:
+    with open(os.path.join(outputDir, "metrics.yaml"), "w") as fd:
+        yaml.safe_dump(metrics, fd)
