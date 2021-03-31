@@ -4,8 +4,8 @@ from typing import Tuple
 from omegaconf.dictconfig import DictConfig
 import torch
 
-from raijin.agents.base_agent import BaseAgent
-from raijin.memory.base_memory import BaseMemory
+from raijin.agents import base_agent as ba
+from raijin.memory import base_memory as bm
 
 from .base_trainer import BaseTrainer
 
@@ -201,7 +201,7 @@ class QTrainer(BaseTrainer):
                     name = str(attrVal).split()[0]
                 stateDicts[name] = stateDict
         # Add trainer's stateful parameters
-        stateDicts.update({"QTrainer" : {"episodeNum" : self.episode}})
+        stateDicts.update({"QTrainer": {"episodeNum": self.episode}})
         return stateDicts
 
     # -----

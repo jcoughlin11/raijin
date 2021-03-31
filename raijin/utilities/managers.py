@@ -3,7 +3,7 @@ from typing import List
 import gym
 from omegaconf.dictconfig import DictConfig
 
-from raijin.trainers import base_trainer as  bt
+from raijin.trainers import base_trainer as bt
 from raijin.utilities.register import registry
 
 

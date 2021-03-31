@@ -38,5 +38,5 @@ def get_chkpt_num(outputDir: str) -> int:
     if len(chkpts) == 0:
         return -1
     chkptNums = [int(c.split("_")[1]) for c in chkpts]
-    chkptNums = sorted(chkpts, reverse=True)
+    chkptNums = sorted(chkptNums, reverse=True)
     return chkptNums[0]

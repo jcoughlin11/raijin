@@ -94,11 +94,11 @@ class QPipeline(BasePipeline):
     # -----
     def process(self, frame: np.ndarray, newEpisode: bool) -> torch.Tensor:
         frame = self._reshape_frame(frame)
-        frame = torch.from_numpy(frame)
-        frame = self.normalize_frame(frame)
-        frame = self.grayscale(frame)
-        frame = self.crop(frame)
-        state = self.stack(frame, newEpisode)
+        frameTensor = torch.from_numpy(frame)
+        normFrame = self.normalize_frame(frameTensor)
+        grayFrame = self.grayscale(normFrame)
+        cropFrame = self.crop(grayFrame)
+        state = self.stack(cropFrame, newEpisode)
         return state
 
     # -----

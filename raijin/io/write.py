@@ -9,14 +9,14 @@ import yaml
 
 from raijin.memory import base_memory as bm
 from raijin.trainers import base_trainer as bt
+from raijin.utilities.io_utilities import get_chkpt_dir
 from raijin.utilities.io_utilities import sanitize_path
 
 
 # ============================================
 #               save_checkpoint
 # ============================================
-def save_checkpoint(
-    trainer: "bt.BaseTrainer", params: DictConfig) -> None:
+def save_checkpoint(trainer: "bt.BaseTrainer", params: DictConfig) -> None:
     """
     Saves the state of the trainer in a checkpoint directory.
 
@@ -60,7 +60,9 @@ def save_params(outputDir: str, params: DictConfig) -> None:
 # ============================================
 #             save_state_dicts
 # ============================================
-def save_state_dicts(trainer: "bt.BaseTrainer", outputDir: str, baseName: str) -> None:
+def save_state_dicts(
+    trainer: "bt.BaseTrainer", outputDir: str, baseName: str
+) -> None:
     stateDict = trainer.state_dict()
     chkptFile = os.path.join(outputDir, f"{baseName}.tar")
     torch.save(stateDict, chkptFile)
@@ -115,7 +117,9 @@ def save_memory(memory: "bm.BaseMemory", outputDir: str) -> None:
     statesDs = fs.create_dataset("states", statesShape, dtype=np.float32)
     actionsDs = fa.create_dataset("actions", m, dtype=np.int32)
     rewardsDs = fr.create_dataset("rewards", m, dtype=np.float32)
-    nextStatesDs = fn.create_dataset("nextStates", statesShape, dtype=np.float32)
+    nextStatesDs = fn.create_dataset(
+        "nextStates", statesShape, dtype=np.float32
+    )
     donesDs = fd.create_dataset("dones", m, dtype=np.int32)
     # Write data
     for i, experience in enumerate(memory.buffer):

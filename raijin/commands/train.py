@@ -62,7 +62,7 @@ class TrainCommand(Command):
             progBar.set_message(msg)
             trainer.train_step_end()
             progBar.advance()
-            if episode % params.io.checkpointFreq == 0:
+            if trainer.episode % params.io.checkpointFreq == 0:
                 save_checkpoint(trainer, params)
         progBar.finish()
         return (params, trainer, progBar)

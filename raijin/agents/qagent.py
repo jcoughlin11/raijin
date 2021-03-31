@@ -1,5 +1,5 @@
 import numpy as np
-from gym import Env 
+from gym import Env
 from omegaconf.dictconfig import DictConfig
 import torch
 
