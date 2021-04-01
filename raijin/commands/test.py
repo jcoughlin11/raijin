@@ -3,6 +3,7 @@ from typing import Tuple
 
 from cleo import Command
 from clikit.ui.components.progress_bar import ProgressBar
+import numpy as np
 from omegaconf.dictconfig import DictConfig
 import torch
 
@@ -35,8 +36,8 @@ class TestCommand(Command):
         self.line("\n")
         params, proctor, progBar = self._test(params, proctor, progBar)
         self.line("\n")
-        self.line("<warning>Cleaning up...</warning>")
-        self._cleanup(params, proctor, progBar)
+        self.line("<warning>Metrics</warning>:")
+        self._cleanup(params, proctor)
         self.line("<warning>Done.</warning>")
 
     # -----
@@ -61,6 +62,10 @@ class TestCommand(Command):
         self, params: DictConfig, proctor: BaseProctor, progBar: ProgressBar
     ) -> Tuple:
         progBar.start()
+        # NOTE: If using a deterministic gym env, the result will be
+        # the same for every episode
+        if "Deterministic" in params.env.name:
+            proctor.nEpisodes = 1
         for proctor.episode in range(proctor.nEpisodes):
             proctor.test_step_start()
             proctor.test()
@@ -74,9 +79,13 @@ class TestCommand(Command):
     # -----
     # _cleanup
     # -----
-    def _cleanup(
-        self, params: DictConfig, proctor: BaseProctor, progBar: ProgressBar
-    ) -> None:
+    def _cleanup(self, params: DictConfig, proctor: BaseProctor) -> None:
+        maxReward = np.max(proctor.metrics["episodeRewards"])
+        avgReward = np.mean(proctor.metrics["episodeRewards"])
+        stdDev = np.std(proctor.metrics["episodeRewards"])
+        self.line(f"\t<info>Max score</info>: {maxReward}")
+        self.line(f"\t<info>Avg. score</info>: {avgReward}")
+        self.line(f"\t<info>Std. Dev</info>: {stdDev}")
         proctor.post_test()
 
     # -----

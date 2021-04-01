@@ -6,6 +6,11 @@ trainer:
     prePopulateSteps : 64
     discountRate     : 0.8
 
+proctor:
+    name          : QProctor
+    nEpisodes     : 10 
+    episodeLength : 1000
+
 env:
     name : SpaceInvadersDeterministic-v4
 

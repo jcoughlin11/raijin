@@ -53,6 +53,7 @@ def save_checkpoint(trainer: "bt.BaseTrainer", params: DictConfig) -> None:
 #                 save_params
 # ============================================
 def save_params(outputDir: str, params: DictConfig) -> None:
+    outputDir = sanitize_path(outputDir)
     with open(os.path.join(outputDir, "params.yaml"), "w") as fd:
         yaml.safe_dump(config.to_yaml(params), fd)
 

@@ -34,7 +34,7 @@ class TrainCommand(Command):
         params, trainer, progBar = self._train(params, trainer, progBar)
         self.line("\n")
         self.line("<warning>Cleaning up...</warning>")
-        self._cleanup(params, trainer, progBar)
+        self._cleanup(params, trainer)
         self.line("<warning>Done.</warning>")
 
     # -----
@@ -72,8 +72,7 @@ class TrainCommand(Command):
     # _cleanup
     # -----
     def _cleanup(
-        self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar
-    ) -> None:
+        self, params: DictConfig, trainer: BaseTrainer) -> None:
         trainer.post_train()
         # In case there aren't any checkpoints, we save a copy of the
         # parameter file to be used during testing

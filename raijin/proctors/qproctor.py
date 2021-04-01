@@ -4,6 +4,8 @@ from omegaconf.dictconfig import DictConfig
 
 from raijin.agents import base_agent as ba
 
+from .base_proctor import BaseProctor
+
 
 # ============================================
 #                   QProctor
@@ -68,5 +70,5 @@ class QProctor(BaseProctor):
     # -----
     # state_dict
     # -----
-    def state_dict(self): -> dict:
+    def state_dict(self) -> dict:
         return {}
