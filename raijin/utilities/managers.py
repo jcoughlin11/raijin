@@ -3,6 +3,7 @@ from typing import List
 import gym
 from omegaconf.dictconfig import DictConfig
 
+from raijin.proctors import base_proctor as bpr
 from raijin.trainers import base_trainer as bt
 from raijin.utilities.register import registry
 
@@ -22,6 +23,18 @@ def get_trainer(params: DictConfig) -> "bt.BaseTrainer":
         agent, lossFunctions, memory, nets, optimizers, params.trainer
     )
     return trainer
+
+
+# ============================================
+#                get_proctor
+# ============================================
+def get_proctor(params: DictConfig, modelStateDict: dict) -> "bpr.BaseProctor":
+    env = get_env(params.env.name)
+    pipeline = registry[params.pipeline.name](params.pipeline)
+    agent = registry[params.agent.name](env, pipeline, params.agent)
+    nets = get_nets(params.nets, pipeline.traceLen, env.action_space.n)
+    proctor = registry[params.proctor.name](agent, nets, modelStateDict, params.proctor)
+    return proctor
 
 
 # ============================================

@@ -2,6 +2,7 @@ from typing import List
 
 from cleo import Application
 
+from raijin.commands.test import TestCommand
 from raijin.commands.train import TrainCommand
 from raijin.utilities.config import ApplicationConfig
 
@@ -23,6 +24,7 @@ class RaijinApplication(Application):
     # -----
     def _get_commands(self) -> List:
         commandList = [
+            TestCommand,
             TrainCommand,
         ]
         return commandList

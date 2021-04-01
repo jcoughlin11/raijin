@@ -42,6 +42,8 @@ class QTrainer(BaseTrainer):
         self.episodeReward = 0.0
         self.episode = 0
         self.metrics = {}
+        # Put the network into training mode
+        self.net.train()
 
     # -----
     # pre_train
@@ -207,5 +209,5 @@ class QTrainer(BaseTrainer):
     # -----
     # _initialize_metrics
     # -----
-    def _initialize_metrics(self):
+    def _initialize_metrics(self) -> None:
         self.metrics["episodeRewards"] = []

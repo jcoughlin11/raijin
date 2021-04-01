@@ -7,6 +7,7 @@ from omegaconf.dictconfig import DictConfig
 from raijin.io.read import read_parameter_file
 from raijin.io.write import save_checkpoint
 from raijin.io.write import save_final_model
+from raijin.io.write import save_params
 from raijin.trainers.base_trainer import BaseTrainer
 from raijin.utilities.managers import get_trainer
 
@@ -74,6 +75,9 @@ class TrainCommand(Command):
         self, params: DictConfig, trainer: BaseTrainer, progBar: ProgressBar
     ) -> None:
         trainer.post_train()
+        # In case there aren't any checkpoints, we save a copy of the
+        # parameter file to be used during testing
+        save_params(params.io.outputDir, params)
         save_final_model(trainer, params.io.checkpointBase, params.io.outputDir)
 
     # -----

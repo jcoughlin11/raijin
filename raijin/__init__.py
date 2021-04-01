@@ -8,6 +8,7 @@ from . import (
     memory,
     networks,
     pipelines,
+    proctors,
     trainers,
     utilities,
 )
