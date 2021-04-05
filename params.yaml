@@ -50,3 +50,6 @@ io:
     checkpointBase : spaceinvaders
     checkpointFreq : 1
     outputDir      : $HOME/data/ai_data
+
+device:
+    name : "cpu"

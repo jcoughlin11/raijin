@@ -27,8 +27,9 @@ class QMemory(BaseMemory):
     # -----
     # constructor
     # -----
-    def __init__(self, params: DictConfig) -> None:
+    def __init__(self, params: DictConfig, device: str) -> None:
         self.capacity = params.capacity
+        self.device = device
         self.buffer = deque(maxlen=self.capacity)
 
     # -----
@@ -73,6 +74,12 @@ class QMemory(BaseMemory):
         actions = actions.reshape((batchSize, 1))
         rewards = rewards.reshape((batchSize, 1))
         dones = dones.reshape((batchSize, 1))
+        # Move to desired device
+        states = states.to(self.device)
+        actions = actions.to(self.device)
+        rewards = rewards.to(self.device)
+        nextStates = nextStates.to(self.device)
+        dones = dones.to(self.device)
         return (states, actions, rewards, nextStates, dones)
 
     # -----

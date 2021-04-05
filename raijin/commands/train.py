@@ -9,6 +9,7 @@ from raijin.io.write import save_checkpoint
 from raijin.io.write import save_final_model
 from raijin.io.write import save_params
 from raijin.trainers.base_trainer import BaseTrainer
+from raijin.utilities.managers import check_device
 from raijin.utilities.managers import get_trainer
 
 
@@ -42,6 +43,11 @@ class TrainCommand(Command):
     # -----
     def _initialize(self) -> Tuple:
         params = read_parameter_file(self.argument("paramFile"))
+        # If gpu is selected, make sure we have cuda. Otherwise, use
+        # a cpu
+        params.device.name = check_device(params.device.name)
+        msg = f"\t<info>Running on</info>: {params.device.name}"
+        self.line(msg)
         trainer = get_trainer(params)
         progBar = self._get_progress_bar(trainer.nEpisodes)
         msg = f"<info>Episode Reward</info>: {trainer.episodeReward}"

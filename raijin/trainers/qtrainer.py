@@ -27,6 +27,7 @@ class QTrainer(BaseTrainer):
         nets: List,
         optimizers: List,
         params: DictConfig,
+        device: str
     ) -> None:
         self.agent = agent
         self.loss_function = lossFunctions[0]
@@ -38,11 +39,13 @@ class QTrainer(BaseTrainer):
         self.prePopulateSteps = params.prePopulateSteps
         self.batchSize = params.batchSize
         self.discountRate = params.discountRate
+        self.device = device
         self.episodeOver = False
         self.episodeReward = 0.0
         self.episode = 0
         self.metrics = {}
         # Put the network into training mode
+        self.net.to(self.device)
         self.net.train()
 
     # -----

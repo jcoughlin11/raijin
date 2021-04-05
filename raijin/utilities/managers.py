@@ -2,6 +2,7 @@ from typing import List
 
 import gym
 from omegaconf.dictconfig import DictConfig
+import torch
 
 from raijin.proctors import base_proctor as bpr
 from raijin.trainers import base_trainer as bt
@@ -12,15 +13,16 @@ from raijin.utilities.register import registry
 #                 get_trainer
 # ============================================
 def get_trainer(params: DictConfig) -> "bt.BaseTrainer":
+    device = params.device.name
     env = get_env(params.env.name)
     pipeline = registry[params.pipeline.name](params.pipeline)
-    agent = registry[params.agent.name](env, pipeline, params.agent)
-    memory = registry[params.memory.name](params.memory)
+    agent = registry[params.agent.name](env, pipeline, params.agent, device)
+    memory = registry[params.memory.name](params.memory, device)
     nets = get_nets(params.nets, pipeline.traceLen, env.action_space.n)
     optimizers = get_optimizers(params.optimizers, nets)
     lossFunctions = get_loss_functions(params.losses)
     trainer = registry[params.trainer.name](
-        agent, lossFunctions, memory, nets, optimizers, params.trainer
+        agent, lossFunctions, memory, nets, optimizers, params.trainer, device
     )
     return trainer
 
@@ -83,3 +85,14 @@ def get_loss_functions(params: DictConfig) -> List:
             del lossParams.name
             lossFunctions.append(cls(lossParams))
     return lossFunctions
+
+
+# ============================================
+#                check_device
+# ============================================
+def check_device(device: str) -> None:
+    # If a gpu is chosen but there isn't any cuda support, switch
+    # to a cpu
+    if device == "cuda" and not torch.cuda.is_available():
+        device = "cpu"
+    return device

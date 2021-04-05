@@ -28,13 +28,14 @@ class QAgent(BaseAgent):
     # constructor
     # -----
     def __init__(
-        self, env: Env, pipeline: "bp.BasePipeline", params: DictConfig
+        self, env: Env, pipeline: "bp.BasePipeline", params: DictConfig, device: str
     ) -> None:
         self.env = env
         self.pipeline = pipeline
         self.epsilonStart = params.epsilonStart
         self.epsilonStop = params.epsilonStop
         self.epsilonDecayRate = params.epsilonDecayRate
+        self.device = device
         self.state = None
         self.decayStep = 0
 
@@ -82,9 +83,14 @@ class QAgent(BaseAgent):
         if actionChoiceType == "explore":
             action = self.env.action_space.sample()
         elif actionChoiceType == "exploit":
+            # Move to gpu, if applicable
+            if self.device == "cuda":
+                state = self.state.cuda(self.device)
+            else:
+                state = self.state.clone()
             # state has shape (C, H, W), but needs shape (N, C, H, W) even
             # with only one sample
-            state = torch.unsqueeze(self.state, 0)
+            state = torch.unsqueeze(state, 0)
             action = torch.argmax(net(state)).item()
         return action
 
