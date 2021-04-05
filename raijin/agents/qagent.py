@@ -91,6 +91,7 @@ class QAgent(BaseAgent):
     # -----
     # step
     # -----
+    @torch.no_grad()
     def step(self, actionChoiceType: str, net: torch.nn.Module) -> Experience:
         """
         Transition from one game frame to the next.
