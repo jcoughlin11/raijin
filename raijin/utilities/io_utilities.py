@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 
 # ============================================
@@ -40,3 +41,50 @@ def get_chkpt_num(outputDir: str) -> int:
     chkptNums = [int(c.split("_")[1]) for c in chkpts]
     chkptNums = sorted(chkptNums, reverse=True)
     return chkptNums[0]
+
+
+# ============================================
+#             package_iteration
+# ============================================
+def package_iteration(outputDir: str) -> None:
+    """
+    Moves any existing checkpoint directories to a `run_x` directory
+    within `outputDir`.
+
+    In order to calculate metric averages and variances, we need
+    multiple runs of the exact same model. This allows each run to be
+    packaged together within the same parent output directory, so we
+    know that each run was of the same model.
+
+    This also serves to make anaylsis easier, since we can loop over
+    each run directory in a given `outputDir`.
+    """
+    outputDir = sanitize_path(outputDir)
+    chkpts = []
+    runs = []
+    # Make sure there are checkpoints to move
+    for obj in os.listdir(outputDir):
+        if obj.startswith("checkpoint"):
+            obj = os.path.join(outputDir, obj)
+            if os.path.isdir(obj):
+                chkpts.append(obj)
+        elif obj.startswith("run"):
+            if os.path.isdir(os.path.join(outputDir, obj)):
+                runs.append(obj)
+    if len(chkpts) == 0:
+        return
+    # Get the most recent run directory
+    if len(runs) == 0:
+        runNum = 0
+    else:
+        runNums = [int(r.split("_")[1]) for r in runs]
+        runNums = sorted(runNums, reverse=True)
+        runNum = runNums[0] + 1
+    # Create the new run directory
+    runDir = os.path.join(outputDir, f"run_{runNum}")
+    os.mkdir(runDir)
+    # Move checkpoints, params, and metric files
+    for obj in os.listdir(outputDir):
+        if not obj.startswith("run"):
+            obj = os.path.join(outputDir, obj)
+            subprocess.call(["mv", obj, runDir])

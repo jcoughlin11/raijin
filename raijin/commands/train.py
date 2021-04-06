@@ -9,6 +9,7 @@ from raijin.io.write import save_checkpoint
 from raijin.io.write import save_final_model
 from raijin.io.write import save_params
 from raijin.trainers.base_trainer import BaseTrainer
+from raijin.utilities.io_utilities import package_iteration
 from raijin.utilities.managers import check_device
 from raijin.utilities.managers import get_trainer
 
@@ -22,6 +23,10 @@ class TrainCommand(Command):
 
     train
         {paramFile : Yaml file containing run parameters.}
+        {--i|iterate : Tells raijin that this is a repeated run for
+            error calculation purposes. Any existing checkpoint
+            directories will be packaged into a `run_1` directory and
+            subsequent runs will be packaged accordingly, too.}
     """
 
     # -----
@@ -43,6 +48,12 @@ class TrainCommand(Command):
     # -----
     def _initialize(self) -> Tuple:
         params = read_parameter_file(self.argument("paramFile"))
+        # If there are existing checkpoints from a previous run
+        # because user maybe didn't know they were going to iterate,
+        # then we need to move those before starting training on the
+        # new iteration
+        if self.option("iterate"):
+            package_iteration(params.io.outputDir)
         # If gpu is selected, make sure we have cuda. Otherwise, use
         # a cpu
         params.device.name = check_device(params.device.name)
@@ -84,6 +95,9 @@ class TrainCommand(Command):
         # parameter file to be used during testing
         save_params(params.io.outputDir, params)
         save_final_model(trainer, params.io.checkpointBase, params.io.outputDir)
+        # Move all existing checkpoint directories to a run_x directory
+        if self.option("iterate"):
+            package_iteration(params.io.outputDir)
 
     # -----
     # _get_progress_bar
