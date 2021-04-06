@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from typing import Tuple
 
 from cleo import Command
@@ -41,7 +42,8 @@ class TrainCommand(Command):
         self.line("\n")
         self.line("<warning>Cleaning up...</warning>")
         self._cleanup(params, trainer)
-        self.line("<warning>Done.</warning>")
+        date = dt.now().strftime("%b %d, %Y; %H:%M")
+        self.line(f"<warning>Completed at</warning>: {date}")
 
     # -----
     # _initialize
@@ -57,14 +59,37 @@ class TrainCommand(Command):
         # If gpu is selected, make sure we have cuda. Otherwise, use
         # a cpu
         params.device.name = check_device(params.device.name)
-        msg = f"\t<info>Running on</info>: {params.device.name}"
-        self.line(msg)
+        self._print_params(params)
         trainer = get_trainer(params)
         progBar = self._get_progress_bar(trainer.nEpisodes)
-        msg = f"<info>Episode Reward</info>: {trainer.episodeReward}"
+        s = "Episode Reward"
+        msg = f"<info>{s:<14}</info> : {trainer.episodeReward}"
         progBar.set_message(msg)
         trainer.pre_train()
         return (params, trainer, progBar)
+
+    # -----
+    # _print_params
+    # -----
+    def _print_params(self, params):
+        pairs = [
+            ("Running on", params.device.name),
+            ("Trainer", params.trainer.name),
+            ("Game", params.env.name),
+            ("Memory", params.memory.name),
+            ("Pipeline", params.pipeline.name),
+            ("Agent", params.agent.name),
+        ]
+        z = zip(params.nets.keys(), params.optimizers.keys(), params.losses.keys())
+        for i, (net, opt, loss) in enumerate(z):
+            pairs.append((f"Network {i+1}", params.nets[net]["name"]))
+            pairs.append((f"Optimizer {i+1}", params.optimizers[opt]["name"]))
+            pairs.append((f"Loss {i+1}", params.losses[loss]["name"]))
+        pairs.append(("Output directory", params.io.outputDir))
+        msg = "\n\t"
+        for (s, p) in pairs:
+            msg += f"<info>{s:<16}</info> : {p}\n\t"
+        self.line(msg)
 
     # -----
     # _train
@@ -76,7 +101,8 @@ class TrainCommand(Command):
         for trainer.episode in range(trainer.nEpisodes):
             trainer.train_step_start()
             trainer.train()
-            msg = f"<info>Episode Reward</info>: {trainer.episodeReward}"
+            s = "Episode Reward"
+            msg = f"<info>{s:<14}</info> : {trainer.episodeReward}"
             progBar.set_message(msg)
             trainer.train_step_end()
             progBar.advance()
@@ -104,8 +130,10 @@ class TrainCommand(Command):
     # -----
     def _get_progress_bar(self, nEpisodes: int) -> ProgressBar:
         progBar = self.progress_bar(nEpisodes)
-        formatStr = "\t<info>Episode</info>: %current%/%max%"
-        formatStr += "\n\t<info>Elapsed Time</info>: %elapsed%"
+        s1 = "Episode"
+        s2 = "Elsapsed Time"
+        formatStr = f"\t<info>{s1:<14}</info> : %current%/%max%"
+        formatStr += f"\n\t<info>{s2:<14}</info> : %elapsed%"
         formatStr += "\n\t%message%"
         progBar.set_format(formatStr)
         return progBar
