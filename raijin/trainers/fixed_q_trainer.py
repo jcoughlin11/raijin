@@ -35,7 +35,7 @@ class FixedQTrainer(QTrainer):
     ) -> None:
         super().__init__(agent, lossFunctions, memory, nets, optimizers, params, device)
         # How frequently to update the target network
-        self.updateFreq = params.trainer.updateFreq
+        self.updateFreq = params.updateFreq
         # Set up the target network
         self.targetNet = deepcopy(self.net)
         # Not sure if these two steps are needed since net will have already
@@ -49,6 +49,7 @@ class FixedQTrainer(QTrainer):
     def train_step_start(self) -> None:
         # Update target network, if needed
         if self.episode % self.updateFreq == 0:
+            print("Updating target network.")
             self.targetNet.load_state_dict(self.net.state_dict())
 
     # -----

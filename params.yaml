@@ -1,10 +1,11 @@
 trainer:
-    name             : QTrainer
-    nEpisodes        : 1
+    name             : FixedQTrainer
+    nEpisodes        : 3
     episodeLength    : 1000
     batchSize        : 32
     prePopulateSteps : 64
     discountRate     : 0.8
+    updateFreq       : 1
 
 proctor:
     name          : QProctor
