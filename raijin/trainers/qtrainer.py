@@ -14,6 +14,11 @@ from .base_trainer import BaseTrainer
 #                   QTrainer
 # ============================================
 class QTrainer(BaseTrainer):
+    """
+    Training loop and learning method from [Mnih et al. 2013][1].
+
+    [1]: https://arxiv.org/abs/1312.5602
+    """
     __name__ = "QTrainer"
 
     # -----
