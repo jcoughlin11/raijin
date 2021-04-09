@@ -1,3 +1,11 @@
+from typing import List
+
+from omegaconf.dictconfig import DictConfig
+import torch
+
+from .fixed_q_trainer import FixedQTrainer
+
+
 # ============================================
 #               DoubleQTrainer
 # ============================================
