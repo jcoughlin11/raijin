@@ -74,9 +74,11 @@ class FixedQTrainer(QTrainer):
         which makes its predicted labels more stable and helps speed up
         convergence.
         """
+        # qNext should have shape (N, nActions)
         qNext = self.targetNet(nextStates)
         # the max operation doesn't return a tensor; it returns an object
         # that contains both the values and indices
+        # qNextMax should have shape (N, 1)
         qNextMax = torch.max(qNext, 1, keepdims=True).values
         maskedVals = (1.0 - dones) * qNextMax
         targets = rewards + self.discountRate * maskedVals

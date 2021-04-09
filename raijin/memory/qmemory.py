@@ -59,7 +59,7 @@ class QMemory(BaseMemory):
         # Split the batch up into components. Each component is a tuple
         states, actions, rewards, nextStates, dones = batch
         # Each state and nextState is already a tensor, so we can just
-        # stack them
+        # stack them. Their shape should be (N, C, H, W)
         states = torch.stack(states)
         nextStates = torch.stack(nextStates)
         # Convert the other components to tensors

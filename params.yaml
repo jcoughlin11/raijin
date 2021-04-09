@@ -1,5 +1,5 @@
 trainer:
-    name             : FixedQTrainer
+    name             : QTrainer
     nEpisodes        : 3
     episodeLength    : 1000
     batchSize        : 32

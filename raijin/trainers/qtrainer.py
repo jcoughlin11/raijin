@@ -151,16 +151,19 @@ class QTrainer(BaseTrainer):
         We only need to change the Q-values for the chosen actions,
         so we use a one-hot vector to vectorize the calculation.
         """
+        # qVals.shape should be (N, nActions)
         qVals = self.net(states)
         nActions = qVals.shape[1]
         # one_hot returns a tensor with one more dimension than the input,
         # so we squeeze that out. The input also has to have a long dtype.
+        # Has shape (N, nActions)
         oneHot = (
             qVals
             * torch.nn.functional.one_hot(
                 actions.to(torch.int64), nActions
             ).squeeze()
         )
+        # qChosen has shape (N, 1)
         qChosen = torch.sum(oneHot, 1, keepdims=True)
         return qChosen
 
@@ -182,9 +185,11 @@ class QTrainer(BaseTrainer):
         reward. Otherwise, we use the Bellman equation. Using a
         mask allows us to do both parts of the calculation at once.
         """
+        # qNext has shape (N, nActions)
         qNext = self.net(nextStates)
         # the max operation doesn't return a tensor; it returns an object
         # that contains both the values and indices
+        # qNextMax has shape (N, 1)
         qNextMax = torch.max(qNext, 1, keepdims=True).values
         maskedVals = (1.0 - dones) * qNextMax
         targets = rewards + self.discountRate * maskedVals
