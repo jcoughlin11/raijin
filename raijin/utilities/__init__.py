@@ -3,4 +3,5 @@ from . import (
     io_utilities,
     managers,
     register,
+    trees,
 )

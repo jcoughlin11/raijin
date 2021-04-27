@@ -52,6 +52,11 @@ class QTrainer(BaseTrainer):
         # Put the network into training mode
         self.net.to(self.device)
         self.net.train()
+        # Prioritized experience replay flag
+        if self.memory.__name__ == "PriorityMemory":
+            self.usingPER = True
+        else:
+            self.usingPER = False
 
     # -----
     # pre_train
@@ -77,7 +82,8 @@ class QTrainer(BaseTrainer):
         for episodeStep in range(self.episodeLength):
             self.training_step("train")
             batch = self.memory.sample(self.batchSize)
-            self.learn(batch)
+            absErrors = self.learn(batch)
+            self.memory.update(absErrors)
             if self.episodeOver:
                 break
 
@@ -92,7 +98,7 @@ class QTrainer(BaseTrainer):
     # -----
     # learn
     # -----
-    def learn(self, batch: Tuple) -> None:
+    def learn(self, batch: Tuple) -> torch.Tensor:
         """
         Implements the Deep-Q Learning algorithm from
         [Mnih et al. 2013][1].
@@ -116,13 +122,20 @@ class QTrainer(BaseTrainer):
 
         [1]: https://arxiv.org/abs/1312.5602
         """
-        states, actions, rewards, nextStates, dones = batch
+        if self.usingPER:
+            states, actions, rewards, nextStates, dones, isWeights = batch
+        else:
+            states, actions, rewards, nextStates, dones = batch
         beliefs = self._get_beliefs(states, actions)
         targets = self._get_targets(nextStates, dones, rewards)
-        loss = self.loss_function(beliefs, targets.detach())
+        if not self.usingPER:
+            isWeights = torch.ones(targets.shape)
+        absErrors = torch.abs(targets - beliefs)
+        loss = isWeights.detach()*self.loss_function(beliefs, targets.detach())
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+        return absErrors
 
     # -----
     # _pre_populate

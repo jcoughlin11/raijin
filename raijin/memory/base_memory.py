@@ -42,3 +42,9 @@ class BaseMemory(ABC):
     @abstractmethod
     def state_dict(self) -> dict:
         pass
+
+    # -----
+    # update
+    # -----
+    def update(self) -> None:
+        pass

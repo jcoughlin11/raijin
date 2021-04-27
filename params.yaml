@@ -29,7 +29,7 @@ losses:
         name : MSELoss
 
 memory:
-    name     : QMemory
+    name     : PriorityMemory
     capacity : 100
 
 pipeline:
