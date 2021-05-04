@@ -112,9 +112,7 @@ def save_memory(memory: "bm.BaseMemory", outputDir: str) -> None:
     fd = h5py.File(donesFile, "w")
     # Initialize datasets
     m = len(memory.buffer)
-    statesShape = list(memory.buffer[0].state.numpy().shape) + [
-        m,
-    ]
+    statesShape = list(memory.buffer[0].state.numpy().shape) + [m,]
     statesDs = fs.create_dataset("states", statesShape, dtype=np.float32)
     actionsDs = fa.create_dataset("actions", m, dtype=np.int32)
     rewardsDs = fr.create_dataset("rewards", m, dtype=np.float32)

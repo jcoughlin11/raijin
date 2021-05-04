@@ -1,4 +1,8 @@
+from typing import Generator
+
 import numpy as np
+
+from raijin.memory.experience import Experience
 
 
 # ============================================
@@ -72,6 +76,38 @@ class SumTree:
         self.dataPointer = 0
         self.tree = np.zeros(2 * self.nLeafs - 1)
         self.data = np.zeros(self.nLeafs, dtype=object)
+
+    # -----
+    # len
+    # -----
+    def __len__(self):
+        """
+        The length of the buffer is needed when saving.
+
+        Employing len, getitem, and iter makes it so that we don't
+        need a second save_memory function.
+        """
+        return self.nLeafs
+
+    # -----
+    # get_item
+    # -----
+    def __getitem__(self, index: int) -> Experience:
+        """
+        Access to experiences is needed when saving in order to get the
+        shape.
+        """
+        return self.data[index]
+
+    # -----
+    # iter
+    # -----
+    def __iter__(self) -> Generator[Experience, None, None]:
+        """
+        Looping over the buffer is needed when saving.
+        """
+        for exp in self.data:
+            yield exp 
 
     # -----
     # add
