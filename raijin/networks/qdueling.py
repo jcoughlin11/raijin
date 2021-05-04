@@ -11,7 +11,7 @@ class DuelingQNetwork(BaseNetwork):
     """
     Implements the network described in [Want et al. 2016][1].
 
-    [1]: https://arxiv.org/abs/1511.06581 
+    [1]: https://arxiv.org/abs/1511.06581
     """
 
     __name__ = "DuelingQNetwork"
@@ -22,7 +22,9 @@ class DuelingQNetwork(BaseNetwork):
     def __init__(self, inChannels: int, nActions: int, **kwargs: dict) -> None:
         super().__init__()
         # First convolutional layer
-        conv1 = nn.Conv2d(in_channels=inChannels, out_channels=16, kernel_size=8, stride=4)
+        conv1 = nn.Conv2d(
+            in_channels=inChannels, out_channels=16, kernel_size=8, stride=4
+        )
         conv1OutShape = self.get_conv_out_shape(110, 84, conv1)
         # Second convolutional layer
         conv2 = nn.Conv2d(
@@ -32,10 +34,14 @@ class DuelingQNetwork(BaseNetwork):
             conv1OutShape[1], conv1OutShape[2], conv2
         )
         # Value stream
-        valueLayer = nn.Linear(in_features=conv2OutShape.prod(), out_features=512)
+        valueLayer = nn.Linear(
+            in_features=int(conv2OutShape.prod()), out_features=512
+        )
         valueOutput = nn.Linear(in_features=512, out_features=1)
         # Advantage stream
-        advantageLayer = nn.Linear(in_features=conv2OutShape.prod(), out_features=512)
+        advantageLayer = nn.Linear(
+            in_features=int(conv2OutShape.prod()), out_features=512
+        )
         advantageOutput = nn.Linear(in_features=512, out_features=nActions)
         # Network components
         self.common = nn.Sequential(
@@ -46,14 +52,10 @@ class DuelingQNetwork(BaseNetwork):
             torch.nn.Flatten(),
         )
         self.valueStream = nn.Sequential(
-            valueLayer,
-            torch.nn.ReLU(),
-            valueOutput
+            valueLayer, torch.nn.ReLU(), valueOutput
         )
         self.advantageStream = nn.Sequential(
-            advantageLayer,
-            torch.nn.ReLU(),
-            advantageOutput
+            advantageLayer, torch.nn.ReLU(), advantageOutput
         )
 
     # -----

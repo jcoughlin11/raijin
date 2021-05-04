@@ -13,7 +13,7 @@ from .base_agent import BaseAgent
 # ============================================
 class RandomAgent(BaseAgent):
     """
-    An agent that performs only randomly selected actions. 
+    An agent that performs only randomly selected actions.
 
     * Progresses through the game frame-by-frame
     * Employs an epsilon-greedy strategy for action selection
@@ -25,7 +25,11 @@ class RandomAgent(BaseAgent):
     # constructor
     # -----
     def __init__(
-        self, env: Env, pipeline: "bp.BasePipeline", params: DictConfig, device: str
+        self,
+        env: Env,
+        pipeline: "bp.BasePipeline",
+        params: DictConfig,
+        device: str,
     ) -> None:
         self.env = env
         self.pipeline = pipeline

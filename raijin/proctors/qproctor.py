@@ -1,3 +1,5 @@
+from typing import Any
+from typing import Dict
 from typing import List
 
 from omegaconf.dictconfig import DictConfig
@@ -16,7 +18,13 @@ class QProctor(BaseProctor):
     # -----
     # constructor
     # -----
-    def __init__(self, agent: "ba.BaseAgent", nets: List, modelStateDict: dict, params: DictConfig) -> None:
+    def __init__(
+        self,
+        agent: "ba.BaseAgent",
+        nets: List,
+        modelStateDict: dict,
+        params: DictConfig,
+    ) -> None:
         self.agent = agent
         self.net = nets[0]
         self.net.load_state_dict(modelStateDict)
@@ -25,7 +33,7 @@ class QProctor(BaseProctor):
         self.episodeOver = False
         self.episodeReward = 0.0
         self.episode = 0
-        self.metrics = {}
+        self.metrics: Dict[str, Any] = {}
         # Put the network into evaluation mode
         self.net.eval()
 
@@ -46,7 +54,7 @@ class QProctor(BaseProctor):
     # -----
     # test
     # -----
-    def test(self) -> None:
+    def test_step(self) -> None:
         self.agent.reset()
         for episodeStep in range(self.episodeLength):
             self.testing_step()

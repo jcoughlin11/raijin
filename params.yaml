@@ -31,6 +31,10 @@ losses:
 memory:
     name     : PriorityMemory
     capacity : 100
+    perA     : 0.6
+    perB     : 0.4
+    perAnneal: 0.001
+    perE     : 0.01
 
 pipeline:
     name         : QPipeline

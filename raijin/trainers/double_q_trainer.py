@@ -3,6 +3,9 @@ from typing import List
 from omegaconf.dictconfig import DictConfig
 import torch
 
+from raijin.agents import base_agent as ba
+from raijin.memory import base_memory as bm
+
 from .fixed_q_trainer import FixedQTrainer
 
 
@@ -15,6 +18,7 @@ class DoubleQTrainer(FixedQTrainer):
 
     [1]: https://arxiv.org/abs/1509.06461v3
     """
+
     __name__ = "DoubleQTrainer"
 
     # -----
@@ -28,9 +32,11 @@ class DoubleQTrainer(FixedQTrainer):
         nets: List,
         optimizers: List,
         params: DictConfig,
-        device: str
+        device: str,
     ) -> None:
-        super().__init__(agent, lossFunctions, memory, nets, optimizers, params, device)
+        super().__init__(
+            agent, lossFunctions, memory, nets, optimizers, params, device
+        )
 
     # -----
     # _get_targets

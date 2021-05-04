@@ -4,23 +4,27 @@ from typing import Tuple
 
 from raijin.utilities.register import register_object
 
+from .experience import Experience
+
 
 # ============================================
 #                  BaseMemory
 # ============================================
 class BaseMemory(ABC):
+    __name__ = "BaseMemory"
+
     # -----
     # subclass_hook
     # -----
-    def __init_subclass__(cls, **kwargs) -> None:
-        super().__init_subclass__(**kwargs)
+    def __init_subclass__(cls) -> None:
+        super().__init_subclass__()
         register_object(cls)
 
     # -----
     # add
     # -----
     @abstractmethod
-    def add(self) -> None:
+    def add(self, experience: Experience) -> None:
         """
         Puts a new experience into the memory buffer.
         """
@@ -30,7 +34,7 @@ class BaseMemory(ABC):
     # sample
     # -----
     @abstractmethod
-    def sample(self) -> Tuple:
+    def sample(self, batchSize: int) -> Tuple:
         """
         Extracts a subset of experiences from the buffer.
         """

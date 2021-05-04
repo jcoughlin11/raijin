@@ -1,6 +1,14 @@
 from abc import ABC
 from abc import abstractmethod
+from typing import Any
+from typing import Dict
+from typing import Tuple
 
+from omegaconf.dictconfig import DictConfig
+import torch
+
+from raijin.agents import base_agent as ba
+from raijin.memory import base_memory as bm
 from raijin.utilities.register import register_object
 
 
@@ -8,6 +16,8 @@ from raijin.utilities.register import register_object
 #                BaseTrainer
 # ============================================
 class BaseTrainer(ABC):
+    __name__ = "BaseTrainer"
+
     # -----
     # subclass_hook
     # -----
@@ -16,10 +26,38 @@ class BaseTrainer(ABC):
         register_object(cls)
 
     # -----
+    # constructor
+    # -----
+    def __init__(
+        self,
+        agent: "ba.BaseAgent",
+        memory: "bm.BaseMemory",
+        device: str,
+        params: DictConfig,
+    ) -> None:
+        self.agent = agent
+        self.memory = memory
+        self.device = device
+        self.nEpisodes = params.nEpisodes
+        self.episodeLength = params.episodeLength
+        self.prePopulateSteps = params.prePopulateSteps
+        self.batchSize = params.batchSize
+        self.discountRate = params.discountRate
+        self.episodeOver = False
+        self.episodeReward = 0.0
+        self.episode = 0
+        self.metrics: Dict[str, Any] = {}
+        # Prioritized experience replay flag
+        if self.memory.__name__ == "PriorityMemory":
+            self.usingPER = True
+        else:
+            self.usingPER = False
+
+    # -----
     # training_step
     # -----
     @abstractmethod
-    def training_step(self) -> None:
+    def training_step(self, actionChoiceType: str) -> None:
         """
         Performs one iteration of the training loop.
         """
@@ -29,7 +67,7 @@ class BaseTrainer(ABC):
     # train
     # -----
     @abstractmethod
-    def train(self) -> None:
+    def train_step(self) -> None:
         """
         Contains the training loop for one full episode.
         """
@@ -39,7 +77,7 @@ class BaseTrainer(ABC):
     # learn
     # -----
     @abstractmethod
-    def learn(self) -> None:
+    def learn(self, batch: Tuple) -> torch.Tensor:
         """
         Updates the weights in the network(s).
         """

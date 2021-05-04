@@ -1,4 +1,5 @@
 from collections import deque
+from typing import Deque
 from typing import Tuple
 
 import numpy as np
@@ -30,7 +31,7 @@ class QMemory(BaseMemory):
     def __init__(self, params: DictConfig, device: str) -> None:
         self.capacity = params.capacity
         self.device = device
-        self.buffer = deque(maxlen=self.capacity)
+        self.buffer: Deque[Experience] = deque(maxlen=self.capacity)
 
     # -----
     # add

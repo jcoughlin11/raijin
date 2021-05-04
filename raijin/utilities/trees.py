@@ -11,7 +11,7 @@ class SumTree:
 
     A sum tree is a binary tree where the value of each node is the
     sum of the values in its child nodes. This is an unsorted tree.
-    
+
     Assuming a perfectly balanced tree (every node has both a left and
     right child and that each subtree descends to the same level) the
     number of nodes in the tree is  nNodes = 2 * nLeafs - 1.

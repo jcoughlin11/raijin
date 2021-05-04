@@ -8,6 +8,8 @@ from raijin.utilities.register import register_object
 #                BaseProctor
 # ============================================
 class BaseProctor(ABC):
+    __name__ = "BaseProctor"
+
     # -----
     # subclass_hook
     # -----

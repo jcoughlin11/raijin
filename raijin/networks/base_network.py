@@ -11,6 +11,8 @@ from raijin.utilities.register import register_object
 #                 BaseNetwork
 # ============================================
 class BaseNetwork(ABC, torch.nn.Module):
+    __name__ = "BaseNetwork"
+
     # -----
     # subclass_hook
     # -----
@@ -29,7 +31,7 @@ class BaseNetwork(ABC, torch.nn.Module):
     # forward
     # -----
     @abstractmethod
-    def forward(self) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Defines a forward pass through the network.
         """

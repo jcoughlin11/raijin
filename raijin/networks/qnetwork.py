@@ -34,7 +34,7 @@ class QNetwork(BaseNetwork):
             conv1OutShape[1], conv1OutShape[2], conv2
         )
         # First fully connected layer
-        fc1 = nn.Linear(in_features=conv2OutShape.prod(), out_features=256)
+        fc1 = nn.Linear(in_features=int(conv2OutShape.prod()), out_features=256)
         # Output layer
         outputLayer = nn.Linear(in_features=256, out_features=nActions)
         # Network

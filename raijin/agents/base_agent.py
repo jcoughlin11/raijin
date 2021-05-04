@@ -1,6 +1,9 @@
 from abc import ABC
 from abc import abstractmethod
 
+import torch
+
+from raijin.memory.experience import Experience
 from raijin.utilities.register import register_object
 
 
@@ -18,11 +21,13 @@ class BaseAgent(ABC):
             for use in the neural network
     """
 
+    __name__ = "BaseAgent"
+
     # -----
     # subclass hook
     # -----
-    def __init_subclass__(cls, **kwargs) -> None:
-        super().__init_subclass__(**kwargs)
+    def __init_subclass__(cls) -> None:
+        super().__init_subclass__()
         register_object(cls)
 
     # -----
@@ -39,7 +44,7 @@ class BaseAgent(ABC):
     # choose_action
     # -----
     @abstractmethod
-    def choose_action(self) -> int:
+    def choose_action(self, actionChoiceType: str) -> int:
         """
         Selects an action to take.
         """
@@ -49,7 +54,7 @@ class BaseAgent(ABC):
     # step
     # -----
     @abstractmethod
-    def step(self) -> None:
+    def step(self, actionChoiceType: str, net: torch.nn.Module) -> Experience:
         """
         Transitions to the next game state.
         """

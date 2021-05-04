@@ -11,6 +11,8 @@ from raijin.utilities.register import register_object
 #               BasePipeline
 # ============================================
 class BasePipeline(ABC):
+    __name__ = "BasePipeline"
+
     # -----
     # subclass_hook
     # -----
@@ -22,7 +24,7 @@ class BasePipeline(ABC):
     # processs
     # -----
     @abstractmethod
-    def process(self) -> torch.Tensor:
+    def process(self, frame: np.ndarray, newEpisode: bool) -> torch.Tensor:
         """
         Performs any desired image processing on the given game frame.
         """

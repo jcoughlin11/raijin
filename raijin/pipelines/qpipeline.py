@@ -1,4 +1,5 @@
 from collections import deque
+from typing import Deque
 
 import numpy as np
 from omegaconf.dictconfig import DictConfig
@@ -24,7 +25,7 @@ class QPipeline(BasePipeline):
         self.offsetWidth = params.offsetWidth
         self.cropHeight = params.cropHeight
         self.cropWidth = params.cropWidth
-        self.frameStack = deque(maxlen=self.traceLen)
+        self.frameStack: Deque[torch.Tensor] = deque(maxlen=self.traceLen)
 
     # -----
     # normalize_frame

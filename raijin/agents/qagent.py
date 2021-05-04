@@ -28,7 +28,11 @@ class QAgent(BaseAgent):
     # constructor
     # -----
     def __init__(
-        self, env: Env, pipeline: "bp.BasePipeline", params: DictConfig, device: str
+        self,
+        env: Env,
+        pipeline: "bp.BasePipeline",
+        params: DictConfig,
+        device: str,
     ) -> None:
         self.env = env
         self.pipeline = pipeline

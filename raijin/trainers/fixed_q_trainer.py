@@ -4,6 +4,9 @@ from typing import List
 from omegaconf.dictconfig import DictConfig
 import torch
 
+from raijin.agents import base_agent as ba
+from raijin.memory import base_memory as bm
+
 from .qtrainer import QTrainer
 
 
@@ -18,6 +21,7 @@ class FixedQTrainer(QTrainer):
     [1]: https://arxiv.org/abs/1509.02971v6
     [2]: https://arxiv.org/abs/1312.5602
     """
+
     __name__ = "FixedQTrainer"
 
     # -----
@@ -31,9 +35,11 @@ class FixedQTrainer(QTrainer):
         nets: List,
         optimizers: List,
         params: DictConfig,
-        device: str
+        device: str,
     ) -> None:
-        super().__init__(agent, lossFunctions, memory, nets, optimizers, params, device)
+        super().__init__(
+            agent, lossFunctions, memory, nets, optimizers, params, device
+        )
         # How frequently to update the target network
         self.updateFreq = params.updateFreq
         # Set up the target network

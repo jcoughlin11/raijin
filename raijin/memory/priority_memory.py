@@ -1,8 +1,10 @@
-from typing import List
 from typing import Tuple
 
 import numpy as np
 from omegaconf.dictconfig import DictConfig
+import torch
+
+from raijin.utilities.trees import SumTree
 
 from .base_memory import BaseMemory
 from .experience import Experience
@@ -45,7 +47,7 @@ class PriorityMemory(BaseMemory):
         # Get the current max priority in the tree. Priorities are
         # held in the leaf nodes
         maxPriority = np.max(self.buffer.tree[-self.buffer.nLeafs :])
-        # If maxPriority is 0, use upperPriority because 0 means the 
+        # If maxPriority is 0, use upperPriority because 0 means the
         # experience will never be chosen
         if maxPriority == 0:
             maxPriority = self.upperPriority
@@ -70,7 +72,7 @@ class PriorityMemory(BaseMemory):
         # training), the indices of these samples (so that the tree can
         # be properly updated), and the importance sampling weights to
         # be used in training
-        self.indices = np.zeros((batchSize,), dtype=np.int)
+        self.indices = np.zeros((batchSize,), dtype=np.int32)
         priorities = np.zeros((batchSize, 1))
         experiences = []
         # We need to break up the range [0, p_tot] equally into
@@ -102,7 +104,9 @@ class PriorityMemory(BaseMemory):
     # -----
     # _process_batch
     # -----
-    def _process_batch(self, batch, batchSize: int, isWeights: np.ndarray) -> Tuple:
+    def _process_batch(
+        self, batch, batchSize: int, isWeights: np.ndarray
+    ) -> Tuple:
         # Split the batch up into components. Each component is a tuple
         states, actions, rewards, nextStates, dones = batch
         # Each state and nextState is already a tensor, so we can just

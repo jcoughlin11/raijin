@@ -19,6 +19,7 @@ class QTrainer(BaseTrainer):
 
     [1]: https://arxiv.org/abs/1312.5602
     """
+
     __name__ = "QTrainer"
 
     # -----
@@ -32,31 +33,15 @@ class QTrainer(BaseTrainer):
         nets: List,
         optimizers: List,
         params: DictConfig,
-        device: str
+        device: str,
     ) -> None:
-        self.agent = agent
+        super().__init__(agent, memory, device, params)
         self.loss_function = lossFunctions[0]
-        self.memory = memory
         self.net = nets[0]
         self.optimizer = optimizers[0]
-        self.nEpisodes = params.nEpisodes
-        self.episodeLength = params.episodeLength
-        self.prePopulateSteps = params.prePopulateSteps
-        self.batchSize = params.batchSize
-        self.discountRate = params.discountRate
-        self.device = device
-        self.episodeOver = False
-        self.episodeReward = 0.0
-        self.episode = 0
-        self.metrics = {}
         # Put the network into training mode
         self.net.to(self.device)
         self.net.train()
-        # Prioritized experience replay flag
-        if self.memory.__name__ == "PriorityMemory":
-            self.usingPER = True
-        else:
-            self.usingPER = False
 
     # -----
     # pre_train
@@ -77,7 +62,7 @@ class QTrainer(BaseTrainer):
     # -----
     # train
     # -----
-    def train(self) -> None:
+    def train_step(self) -> None:
         self.agent.reset()
         for episodeStep in range(self.episodeLength):
             self.training_step("train")
@@ -131,7 +116,9 @@ class QTrainer(BaseTrainer):
         if not self.usingPER:
             isWeights = torch.ones(targets.shape)
         absErrors = torch.abs(targets - beliefs)
-        loss = isWeights.detach()*self.loss_function(beliefs, targets.detach())
+        loss = (isWeights.detach() * self.loss_function(
+            beliefs, targets.detach()
+        )).mean()
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
