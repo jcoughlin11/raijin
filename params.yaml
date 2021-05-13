@@ -1,11 +1,11 @@
 trainer:
     name             : QTrainer
-    nEpisodes        : 3
+    nEpisodes        : 2
     episodeLength    : 1000
     batchSize        : 32
     prePopulateSteps : 64
     discountRate     : 0.8
-    updateFreq       : 1
+    updateFreq       : 2
 
 proctor:
     name          : QProctor
@@ -50,6 +50,7 @@ agent:
     epsilonStart     : 1.0
     epsilonStop      : 0.01
     epsilonDecayRate : 0.001
+    skipFrames       : 10
 
 io:
     checkpointBase : spaceinvaders

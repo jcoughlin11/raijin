@@ -34,13 +34,10 @@ class QAgent(BaseAgent):
         params: DictConfig,
         device: str,
     ) -> None:
-        self.env = env
-        self.pipeline = pipeline
+        super().__init__(env, pipeline, device, params.skipFrames)
         self.epsilonStart = params.epsilonStart
         self.epsilonStop = params.epsilonStop
         self.epsilonDecayRate = params.epsilonDecayRate
-        self.device = device
-        self.state = None
         self.decayStep = 0
 
     # -----
@@ -106,8 +103,18 @@ class QAgent(BaseAgent):
         """
         Transition from one game frame to the next.
         """
-        action = self.choose_action(actionChoiceType, net)
+        frameCounter = 0
+        if self.__name__ == "RandomAgent":
+            action = self.choose_action("explore", net)
+        else:
+            action = self.choose_action(actionChoiceType, net)
         nextFrame, reward, done, _ = self.env.step(action)
+        # If we're skipping frames (so that an action is chosen every x
+        # frames instead of every frame), we repeat the chosen action x
+        # times, since gym needs an action at every frame
+        while frameCounter < self.skipFrames:
+            nextFrame, reward, done, _ = self.env.step(action)
+            frameCounter += 1
         nextState = self.pipeline.process(nextFrame, False)
         experience = Experience(self.state, action, reward, nextState, done)
         if done:

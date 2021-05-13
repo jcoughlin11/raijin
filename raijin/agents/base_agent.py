@@ -1,9 +1,11 @@
 from abc import ABC
 from abc import abstractmethod
 
+from gym import Env
 import torch
 
 from raijin.memory.experience import Experience
+from raijin.pipelines import base_pipeline as bp
 from raijin.utilities.register import register_object
 
 
@@ -22,6 +24,16 @@ class BaseAgent(ABC):
     """
 
     __name__ = "BaseAgent"
+
+    # -----
+    # constructor
+    # -----
+    def __init__(self, env: Env, pipeline: "bp.BasePipeline", device: str, skipFrames: int) -> None:
+        self.env = env
+        self.pipeline = pipeline
+        self.device = device
+        self.skipFrames = skipFrames
+        self.state = None
 
     # -----
     # subclass hook
