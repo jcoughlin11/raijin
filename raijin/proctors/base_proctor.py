@@ -28,10 +28,10 @@ class BaseProctor(ABC):
         pass
 
     # -----
-    # test
+    # test_episode
     # -----
     @abstractmethod
-    def test(self) -> None:
+    def test_episode(self) -> None:
         """
         Contains the testing loop for one full episode.
         """
@@ -54,18 +54,18 @@ class BaseProctor(ABC):
         pass
 
     # -----
-    # test_step_start
+    # step_start
     # -----
-    def test_step_start(self) -> None:
+    def step_start(self) -> None:
         """
         Called at the start of each episode.
         """
         pass
 
     # -----
-    # test_step_end
+    # step_end
     # -----
-    def test_step_end(self) -> None:
+    def step_end(self) -> None:
         """
         Called at the end of each episode.
         """

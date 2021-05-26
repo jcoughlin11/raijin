@@ -60,9 +60,9 @@ class QTrainer(BaseTrainer):
         self.episodeOver = experience.done
 
     # -----
-    # train
+    # train_episode
     # -----
-    def train_step(self) -> None:
+    def train_episode(self) -> None:
         self.agent.reset()
         for episodeStep in range(self.episodeLength):
             self.training_step("train")
@@ -73,9 +73,9 @@ class QTrainer(BaseTrainer):
                 break
 
     # -----
-    # train_step_end
+    # episode_end
     # -----
-    def train_step_end(self) -> None:
+    def episode_end(self) -> None:
         self.episodeOver = False
         self.metrics["episodeRewards"].append(self.episodeReward)
         self.episodeReward = 0.0

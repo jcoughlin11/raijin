@@ -64,10 +64,10 @@ class BaseTrainer(ABC):
         pass
 
     # -----
-    # train
+    # train_episode
     # -----
     @abstractmethod
-    def train_step(self) -> None:
+    def train_episode(self) -> None:
         """
         Contains the training loop for one full episode.
         """
@@ -100,20 +100,38 @@ class BaseTrainer(ABC):
         pass
 
     # -----
-    # train_step_start
+    # episode_start
     # -----
-    def train_step_start(self) -> None:
+    def episode_start(self) -> None:
         """
         Called at the start of each episode.
         """
         pass
 
     # -----
-    # train_step_end
+    # episode_end
     # -----
-    def train_step_end(self) -> None:
+    def episode_end(self) -> None:
         """
         Called at the end of each episode.
+        """
+        pass
+
+    # -----
+    # step_start
+    # -----
+    def step_start(self) -> None:
+        """
+        Called at the start of each training step. 
+        """
+        pass
+
+    # -----
+    # step_end
+    # -----
+    def step_end(self) -> None:
+        """
+        Called at the end of each training step. 
         """
         pass
 

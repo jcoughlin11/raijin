@@ -61,11 +61,11 @@ class TestCommand(Command):
         if "Deterministic" in self.params.env.name:
             self.proctor.nEpisodes = 1
         for self.proctor.episode in range(self.proctor.nEpisodes):
-            self.proctor.test_step_start()
-            self.proctor.test_step()
+            self.proctor.step_start()
+            self.proctor.test_episode()
             msg = f"<info>Episode Reward</info>: {self.proctor.episodeReward}"
             self.progBar.set_message(msg)
-            self.proctor.test_step_end()
+            self.proctor.step_end()
             self.progBar.advance()
         self.progBar.finish()
         self.proctor.post_test()

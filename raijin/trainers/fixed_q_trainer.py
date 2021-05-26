@@ -50,9 +50,9 @@ class FixedQTrainer(QTrainer):
         self.targetNet.train()
 
     # -----
-    # train_step_start
+    # episode_start
     # -----
-    def train_step_start(self) -> None:
+    def episode_start(self) -> None:
         # Update target network, if needed
         if self.episode % self.updateFreq == 0:
             print("Updating target network.")

@@ -52,9 +52,9 @@ class QProctor(BaseProctor):
         self.episodeOver = experience.done
 
     # -----
-    # test
+    # test_episode
     # -----
-    def test_step(self) -> None:
+    def test_episode(self) -> None:
         self.agent.reset()
         for episodeStep in range(self.episodeLength):
             self.testing_step()
@@ -62,9 +62,9 @@ class QProctor(BaseProctor):
                 break
 
     # -----
-    # test_step_end
+    # step_end
     # -----
-    def test_step_end(self) -> None:
+    def step_end(self) -> None:
         self.episodeOver = False
         self.metrics["episodeRewards"].append(self.episodeReward)
         self.episodeReward = 0.0

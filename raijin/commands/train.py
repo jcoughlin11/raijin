@@ -74,14 +74,14 @@ class TrainCommand(Command):
         # Loop over the desired number of episodes
         for self.trainer.episode in range(self.trainer.nEpisodes):
             # Run the pre-training step hook
-            self.trainer.train_step_start()
+            self.trainer.episode_start()
             # Main body of training loop
-            self.trainer.train_step()
+            self.trainer.train_episode()
             s = "Episode Reward"
             msg = f"<info>{s:<14}</info> : {self.trainer.episodeReward}"
             self.progBar.set_message(msg)
             # End training step hook
-            self.trainer.train_step_end()
+            self.trainer.episode_end()
             self.progBar.advance()
             # Save, if applicable
             if self.trainer.episode % self.params.io.checkpointFreq == 0:
