@@ -24,16 +24,17 @@ class QProctor(BaseProctor):
         nets: List,
         modelStateDict: dict,
         params: DictConfig,
+        metrics
     ) -> None:
         self.agent = agent
         self.net = nets[0]
         self.net.load_state_dict(modelStateDict)
         self.nEpisodes = params.nEpisodes
         self.episodeLength = params.episodeLength
+        self.metrics = metrics
         self.episodeOver = False
         self.episodeReward = 0.0
         self.episode = 0
-        self.metrics: Dict[str, Any] = {}
         # Put the network into evaluation mode
         self.net.eval()
 
@@ -41,7 +42,7 @@ class QProctor(BaseProctor):
     # pre_test
     # -----
     def pre_test(self) -> None:
-        self._initialize_metrics()
+        self.metrics.reset()
 
     # -----
     # testing_step
@@ -66,14 +67,8 @@ class QProctor(BaseProctor):
     # -----
     def step_end(self) -> None:
         self.episodeOver = False
-        self.metrics["episodeRewards"].append(self.episodeReward)
+        self.metrics.update(self)
         self.episodeReward = 0.0
-
-    # -----
-    # _initialize_metrics
-    # -----
-    def _initialize_metrics(self) -> None:
-        self.metrics["episodeRewards"] = []
 
     # -----
     # state_dict

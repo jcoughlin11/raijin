@@ -6,6 +6,7 @@ import numpy as np
 import torch
 
 from raijin.io.read import read_parameter_file
+from raijin.metrics.metric_list import MetricList
 from raijin.utilities.managers import get_nets
 from raijin.utilities.register import registry
 
@@ -91,8 +92,9 @@ class TestCommand(Command):
             env, pipeline, self.params.agent
         )
         nets = get_nets(self.params.nets, pipeline.traceLen, env.action_space.n)
+        metrics = MetricList([registry[m.__name__]() for m in self.params.metrics)
         self.proctor = registry[self.params.proctor.name](
-            agent, nets, modelStateDict, self.params.proctor
+            agent, nets, modelStateDict, self.params.proctor, metrics
         )
 
     # -----

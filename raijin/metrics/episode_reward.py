@@ -1,3 +1,8 @@
+from typing import Union
+
+from raijin.proctors import base_proctor as bp
+from raijin.trainers import base_trainer as bt
+
 from .base_metric import BaseMetric
 
 
@@ -23,8 +28,8 @@ class EpisodeReward(BaseMetric):
     # -----
     # update
     # -----
-    def update(self, reward=0.0) -> None:
-        self.episodeRewards.append(reward)
+    def update(self, manager: Union["bp.BaseProctor", "bt.BaseTrainer"]) -> None:
+        self.episodeRewards.append(manager.episodeReward)
 
     # -----
     # log

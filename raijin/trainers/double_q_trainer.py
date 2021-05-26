@@ -33,9 +33,10 @@ class DoubleQTrainer(FixedQTrainer):
         optimizers: List,
         params: DictConfig,
         device: str,
+        metrics
     ) -> None:
         super().__init__(
-            agent, lossFunctions, memory, nets, optimizers, params, device
+            agent, lossFunctions, memory, nets, optimizers, params, device, metrics
         )
 
     # -----

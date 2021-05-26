@@ -34,8 +34,9 @@ class QTrainer(BaseTrainer):
         optimizers: List,
         params: DictConfig,
         device: str,
+        metrics
     ) -> None:
-        super().__init__(agent, memory, device, params)
+        super().__init__(agent, memory, device, params, metrics)
         self.loss_function = lossFunctions[0]
         self.net = nets[0]
         self.optimizer = optimizers[0]
@@ -48,7 +49,7 @@ class QTrainer(BaseTrainer):
     # -----
     def pre_train(self) -> None:
         self._pre_populate()
-        self._initialize_metrics()
+        self.metrics.reset()
 
     # -----
     # training_step
@@ -77,7 +78,7 @@ class QTrainer(BaseTrainer):
     # -----
     def episode_end(self) -> None:
         self.episodeOver = False
-        self.metrics["episodeRewards"].append(self.episodeReward)
+        self.metrics.update(self)
         self.episodeReward = 0.0
 
     # -----
@@ -218,9 +219,3 @@ class QTrainer(BaseTrainer):
         # Add trainer's stateful parameters
         stateDicts.update({"QTrainer": {"episodeNum": self.episode}})
         return stateDicts
-
-    # -----
-    # _initialize_metrics
-    # -----
-    def _initialize_metrics(self) -> None:
-        self.metrics["episodeRewards"] = []

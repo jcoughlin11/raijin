@@ -1,6 +1,9 @@
 from abc import ABC
 from abc import abstractmethod
+from typing import Union
 
+from raijin.proctors import base_proctor as bp
+from raijin.trainers import base_trainer as bt
 from raijin.utilities.register import register_object
 
 
@@ -32,7 +35,7 @@ class BaseMetric(ABC):
     # update
     # -----
     @abstractmethod
-    def update(self, **kwargs: dict) -> None:
+    def update(self, manager: Union["bp.BaseProctor", "bt.BaseTrainer"]) -> None:
         pass
 
     # -----

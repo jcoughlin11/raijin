@@ -36,9 +36,10 @@ class FixedQTrainer(QTrainer):
         optimizers: List,
         params: DictConfig,
         device: str,
+        metrics
     ) -> None:
         super().__init__(
-            agent, lossFunctions, memory, nets, optimizers, params, device
+            agent, lossFunctions, memory, nets, optimizers, params, device, metrics
         )
         # How frequently to update the target network
         self.updateFreq = params.updateFreq

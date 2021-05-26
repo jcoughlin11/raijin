@@ -7,6 +7,7 @@ from raijin.io.read import read_parameter_file
 from raijin.io.write import save_checkpoint
 from raijin.io.write import save_final_model
 from raijin.io.write import save_params
+from raijin.metrics.metric_list import MetricList
 from raijin.utilities.io_utilities import package_iteration
 from raijin.utilities.managers import check_device
 from raijin.utilities.managers import get_loss_functions
@@ -125,6 +126,7 @@ class TrainCommand(Command):
         nets = get_nets(self.params.nets, pipeline.traceLen, env.action_space.n)
         optimizers = get_optimizers(self.params.optimizers, nets)
         lossFunctions = get_loss_functions(self.params.losses)
+        metrics = MetricList([registry[m.__name__]() for m in self.params.metrics)
         self.trainer = registry[self.params.trainer.name](
             agent,
             lossFunctions,
@@ -133,6 +135,7 @@ class TrainCommand(Command):
             optimizers,
             self.params.trainer,
             device,
+            metrics
         )
 
     # -----

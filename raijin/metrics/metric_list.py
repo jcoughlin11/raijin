@@ -1,3 +1,10 @@
+from typing import List
+from typing import Union
+
+from raijin.proctors import base_proctor as bp
+from raijin.trainers import base_trainer as bt
+
+
 # ============================================
 #                 MetricList
 # ============================================
@@ -11,7 +18,7 @@ class MetricList:
     # -----
     # constructor
     # -----
-    def __init__(self, metrics):
+    def __init__(self, metrics: List):
         self.metrics = metrics
 
     # -----
@@ -24,9 +31,9 @@ class MetricList:
     # -----
     # update
     # -----
-    def update(self, *args, **kwargs) -> None:
+    def update(self, manager: Union["bp.BaseProctor", "bt.BaseTrainer"]) -> None:
         for m in self.metrics:
-            m.update(*args, **kwargs)
+            m.update(manager)
 
     # -----
     # log

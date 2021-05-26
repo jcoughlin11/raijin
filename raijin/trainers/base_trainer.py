@@ -34,6 +34,7 @@ class BaseTrainer(ABC):
         memory: "bm.BaseMemory",
         device: str,
         params: DictConfig,
+        metrics
     ) -> None:
         self.agent = agent
         self.memory = memory
@@ -43,10 +44,10 @@ class BaseTrainer(ABC):
         self.prePopulateSteps = params.prePopulateSteps
         self.batchSize = params.batchSize
         self.discountRate = params.discountRate
+        self.metrics: metrics 
         self.episodeOver = False
         self.episodeReward = 0.0
         self.episode = 0
-        self.metrics: Dict[str, Any] = {}
         # Prioritized experience replay flag
         if self.memory.__name__ == "PriorityMemory":
             self.usingPER = True
