@@ -36,8 +36,8 @@ class MetricList:
             m.update(manager)
 
     # -----
-    # log
+    # save
     # -----
-    def log(self) -> None:
+    def save(self, outputDir) -> None:
         for m in self.metrics:
-            m.log()
+            m.save(outputDir)

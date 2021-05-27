@@ -50,5 +50,5 @@ class BaseMemory(ABC):
     # -----
     # update
     # -----
-    def update(self) -> None:
+    def update(self, *args, **kwargs) -> None:
         pass

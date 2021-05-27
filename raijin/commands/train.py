@@ -126,7 +126,7 @@ class TrainCommand(Command):
         nets = get_nets(self.params.nets, pipeline.traceLen, env.action_space.n)
         optimizers = get_optimizers(self.params.optimizers, nets)
         lossFunctions = get_loss_functions(self.params.losses)
-        metrics = MetricList([registry[m.__name__]() for m in self.params.metrics)
+        metrics = MetricList([registry[m]() for m in self.params.metrics])
         self.trainer = registry[self.params.trainer.name](
             agent,
             lossFunctions,

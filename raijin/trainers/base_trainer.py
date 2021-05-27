@@ -44,7 +44,7 @@ class BaseTrainer(ABC):
         self.prePopulateSteps = params.prePopulateSteps
         self.batchSize = params.batchSize
         self.discountRate = params.discountRate
-        self.metrics: metrics 
+        self.metrics = metrics 
         self.episodeOver = False
         self.episodeReward = 0.0
         self.episode = 0

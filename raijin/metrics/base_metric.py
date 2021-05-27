@@ -39,8 +39,8 @@ class BaseMetric(ABC):
         pass
 
     # -----
-    # log
+    # save
     # -----
     @abstractmethod
-    def log(self) -> None:
+    def save(self) -> None:
         pass

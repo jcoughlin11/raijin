@@ -42,7 +42,7 @@ def save_checkpoint(trainer: "bt.BaseTrainer", params: DictConfig) -> None:
     # Save copy of parameter file
     save_params(chkptDir, params)
     # Save metrics
-    save_metrics(chkptDir, trainer.metrics)
+    trainer.metrics.save(chkptDir)
     # Save state dicts
     save_state_dicts(trainer, chkptDir, params.io.checkpointBase)
     # Save experience buffer
@@ -133,11 +133,3 @@ def save_memory(memory: "bm.BaseMemory", outputDir: str) -> None:
     fr.close()
     fn.close()
     fd.close()
-
-
-# ============================================
-#                save_metrics
-# ============================================
-def save_metrics(outputDir: str, metrics: dict) -> None:
-    with open(os.path.join(outputDir, "metrics.yaml"), "w") as fd:
-        yaml.safe_dump(metrics, fd)

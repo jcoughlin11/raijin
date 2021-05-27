@@ -6,6 +6,7 @@ from . import (
     console,
     io,
     memory,
+    metrics,
     networks,
     pipelines,
     proctors,

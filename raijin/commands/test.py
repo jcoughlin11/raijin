@@ -92,7 +92,7 @@ class TestCommand(Command):
             env, pipeline, self.params.agent
         )
         nets = get_nets(self.params.nets, pipeline.traceLen, env.action_space.n)
-        metrics = MetricList([registry[m.__name__]() for m in self.params.metrics)
+        metrics = MetricList([registry[m]() for m in self.params.metrics])
         self.proctor = registry[self.params.proctor.name](
             agent, nets, modelStateDict, self.params.proctor, metrics
         )
