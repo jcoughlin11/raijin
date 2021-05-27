@@ -1,5 +1,7 @@
 import os
+import pathlib
 
+from gitinfo import get_git_info
 import h5py
 import numpy as np
 from omegaconf import OmegaConf as config
@@ -47,6 +49,8 @@ def save_checkpoint(trainer: "bt.BaseTrainer", params: DictConfig) -> None:
     save_state_dicts(trainer, chkptDir, params.io.checkpointBase)
     # Save experience buffer
     save_memory(trainer.memory, chkptDir)
+    # Save current codebase hash for reproducability
+    save_version(chkptDir)
 
 
 # ============================================
@@ -85,6 +89,8 @@ def save_final_model(
         os.makedirs(outputDir)
     modelFile = os.path.join(outputDir, "model.pt")
     torch.save(trainer.net.state_dict(), modelFile)
+    # Save current codebase hash for reproducability
+    save_version(outputDir)
 
 
 # ============================================
@@ -133,3 +139,24 @@ def save_memory(memory: "bm.BaseMemory", outputDir: str) -> None:
     fr.close()
     fn.close()
     fd.close()
+
+
+# ============================================
+#                save_version
+# ============================================
+def save_version(outputDir):
+    """
+    Gets the current git info and saves it to a `git_info.yaml` file.
+
+    Includes:
+        - current commit hash
+        - path to the .git directory
+        - commit message
+        - tree hash
+        - parent hash
+        - commit author
+        - commit date
+    """
+    gitInfo = get_git_info(dir=pathlib.Path(__file__).parent.absolute())
+    with open(os.path.join(outputDir, "git_info.yaml"), "w") as fd:
+        yaml.safe_dump(gitInfo, fd)

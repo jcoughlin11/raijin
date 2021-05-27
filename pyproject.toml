@@ -14,6 +14,7 @@ atari-py = "^0.2.6"
 torchvision = "0.8.2"
 h5py = "^3.2.1"
 pretty-errors = "^1.2.20"
+python-git-info = "^0.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"

@@ -502,6 +502,14 @@ toml = "*"
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
+name = "python-git-info"
+version = "0.7.1"
+description = "Get git information repository, directly from .git"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pyyaml"
 version = "5.3.1"
 description = "YAML parser and emitter for Python"
@@ -613,7 +621,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "51f4d6fc3c96d7c47326c9655f8124291d953706d1ad5c972bbcc2bd8ae694f1"
+content-hash = "a9f108515c3f029c24abfab8528ef1e2f45e09f110a811da1aa6b90b0d74aef4"
 
 [metadata.files]
 appdirs = [
@@ -880,6 +888,9 @@ pyparsing = [
 pytest = [
     {file = "pytest-6.2.2-py3-none-any.whl", hash = "sha256:b574b57423e818210672e07ca1fa90aaf194a4f63f3ab909a2c67ebb22913839"},
     {file = "pytest-6.2.2.tar.gz", hash = "sha256:9d1edf9e7d0b84d72ea3dbcdfd22b35fb543a5e8f2a60092dd578936bf63d7f9"},
+]
+python-git-info = [
+    {file = "python-git-info-0.7.1.tar.gz", hash = "sha256:07eb10e9e7d9510db0866a85902825a138ee618b08f8104e834b6758ae8623c8"},
 ]
 pyyaml = [
     {file = "PyYAML-5.3.1-cp27-cp27m-win32.whl", hash = "sha256:74809a57b329d6cc0fdccee6318f44b9b8649961fa73144a98735b0aaf029f1f"},
