@@ -4,6 +4,7 @@ from cleo import Command
 import gym
 
 from raijin.io.read import read_parameter_file
+from raijin.io.write import display_banner
 from raijin.io.write import save_checkpoint
 from raijin.io.write import save_final_model
 from raijin.io.write import save_params
@@ -35,6 +36,7 @@ class TrainCommand(Command):
     # handle
     # -----
     def handle(self) -> None:
+        display_banner(self.line)
         self.line("<warning>Initializing...</warning>")
         self._setup()
         self.line("<warning>Training...</warning>")

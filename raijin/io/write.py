@@ -9,6 +9,7 @@ from omegaconf.dictconfig import DictConfig
 import torch
 import yaml
 
+from raijin import __version__ as raijinVersion
 from raijin.memory import base_memory as bm
 from raijin.trainers import base_trainer as bt
 from raijin.utilities.io_utilities import get_chkpt_dir
@@ -160,3 +161,14 @@ def save_version(outputDir):
     gitInfo = get_git_info(dir=pathlib.Path(__file__).parent.absolute())
     with open(os.path.join(outputDir, "git_info.yaml"), "w") as fd:
         yaml.safe_dump(gitInfo, fd)
+
+
+# ============================================
+#               display_banner
+# ============================================
+def display_banner(display_function):
+    """
+    Prints code name, logo, and version information.
+    """
+    display_function("Raijin".center(os.get_terminal_size().columns))
+    display_function(f"v{raijinVersion}".center(os.get_terminal_size().columns))

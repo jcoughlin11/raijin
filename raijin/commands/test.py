@@ -6,6 +6,7 @@ import numpy as np
 import torch
 
 from raijin.io.read import read_parameter_file
+from raijin.io.write import display_banner
 from raijin.metrics.metric_list import MetricList
 from raijin.utilities.managers import get_nets
 from raijin.utilities.register import registry
@@ -30,8 +31,9 @@ class TestCommand(Command):
         See: https://tinyurl.com/6m86cz9s
         and: https://tinyurl.com/358ju8yx
         """
+        display_banner(self.line)
         self.line("<warning>Initializing...</warning>")
-        self._initialize()
+        self._setup()
         self.line("<warning>Testing...</warning>")
         self.line("\n")
         self._test()
@@ -41,9 +43,9 @@ class TestCommand(Command):
         self.line("<warning>Done.</warning>")
 
     # -----
-    # _initialize
+    # _setup
     # -----
-    def _initialize(self) -> None:
+    def _setup(self) -> None:
         path = self.argument("path")
         self.params = read_parameter_file(os.path.join(path, "params.yaml"))
         # Load the trained network parameters from the final model file
