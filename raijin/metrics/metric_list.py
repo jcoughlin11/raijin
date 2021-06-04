@@ -1,3 +1,4 @@
+import os
 from typing import List
 from typing import Union
 
@@ -39,5 +40,8 @@ class MetricList:
     # save
     # -----
     def save(self, outputDir) -> None:
+        if os.path.basename(outputDir) != "metrics":
+            outputDir = os.path.join(outputDir, "metrics")
+            os.mkdir(outputDir)
         for m in self.metrics:
             m.save(outputDir)

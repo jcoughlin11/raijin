@@ -105,6 +105,9 @@ def save_memory(memory: "bm.BaseMemory", outputDir: str) -> None:
     (states, actions, rewards, nextStates, and dones) and then saving
     each one to is own hdf5 file.
     """
+    outputDir = os.path.join(outputDir, "memory")
+    if not os.path.exists(outputDir):
+        os.mkdir(outputDir)
     # Set up file names
     statesFile = os.path.join(outputDir, "buffer_states.h5py")
     actionsFile = os.path.join(outputDir, "buffer_actions.h5py")
