@@ -70,7 +70,7 @@ def save_state_dicts(
     trainer: "bt.BaseTrainer", outputDir: str, baseName: str
 ) -> None:
     stateDict = trainer.state_dict()
-    chkptFile = os.path.join(outputDir, f"{baseName}.tar")
+    chkptFile = os.path.join(outputDir, f"{baseName}_state_dicts.tar")
     torch.save(stateDict, chkptFile)
 
 
