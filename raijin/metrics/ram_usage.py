@@ -48,4 +48,4 @@ class RAMUsage(BaseMetric):
     # -----
     @property
     def values(self) -> dict:
-        return self.ramUsage
+        return list(self.ramUsage.values())

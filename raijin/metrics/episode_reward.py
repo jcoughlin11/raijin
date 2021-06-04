@@ -1,5 +1,4 @@
 import os
-from typing import List
 from typing import Union
 
 import yaml
@@ -22,19 +21,19 @@ class EpisodeReward(BaseMetric):
     # constructor
     # -----
     def __init__(self) -> None:
-        self.episodeRewards = []
+        self.episodeRewards = {} 
 
     # -----
     # reset
     # -----
     def reset(self) -> None:
-        self.episodeRewards = []
+        self.episodeRewards = {} 
 
     # -----
     # update
     # -----
     def update(self, mgr: Union["bp.BaseProctor", "bt.BaseTrainer"]) -> None:
-        self.episodeRewards.append(mgr.episodeReward)
+        self.episodeRewards[f"{mgr.episode}"] = mgr.episodeReward
 
     # -----
     # save
@@ -47,5 +46,5 @@ class EpisodeReward(BaseMetric):
     # values
     # -----
     @property
-    def values(self) -> List:
-        return self.episodeRewards
+    def values(self) -> dict:
+        return list(self.episodeRewards.values())

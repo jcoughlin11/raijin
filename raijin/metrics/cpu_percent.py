@@ -48,4 +48,4 @@ class CPUPercent(BaseMetric):
     # -----
     @property
     def values(self) -> dict:
-        return self.cpuPercent
+        return list(self.cpuPercent.values())
