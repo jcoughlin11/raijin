@@ -12,7 +12,7 @@ import yaml
 from raijin import __version__ as raijinVersion
 from raijin.memory import base_memory as bm
 from raijin.trainers import base_trainer as bt
-from raijin.utilities.io_utilities import get_chkpt_dir
+from raijin.utilities.io_utilities import get_numbered_dir
 from raijin.utilities.io_utilities import sanitize_path
 
 
@@ -41,7 +41,7 @@ def save_checkpoint(trainer: "bt.BaseTrainer", params: DictConfig) -> None:
     See: https://tinyurl.com/ycyuww2c
     """
     # Create checkpoint directory
-    chkptDir = get_chkpt_dir(params.io.outputDir)
+    chkptDir = get_numbered_dir(params.io.outputDir, "checkpoint")
     # Save copy of parameter file
     save_params(chkptDir, params)
     # Save metrics

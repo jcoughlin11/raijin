@@ -12,35 +12,35 @@ def sanitize_path(path: str) -> str:
 
 
 # ============================================
-#               get_chkpt_dir
+#              get_numbered_dir
 # ============================================
-def get_chkpt_dir(outputDir: str) -> str:
+def get_numbered_dir(outputDir: str, base: str) -> str:
     outputDir = sanitize_path(outputDir)
     # Get the most recent checkpoint number
-    chkptNum = get_chkpt_num(outputDir)
+    dirNum = get_dir_num(outputDir, base)
     # Create new checkpoint directory
-    chkptDir = os.path.join(outputDir, f"checkpoint_{chkptNum+1}")
-    os.makedirs(chkptDir)
-    return chkptDir
+    nextDir = os.path.join(outputDir, f"{base}_{dirNum+1}")
+    os.makedirs(nextDir)
+    return nextDir
 
 
 # ============================================
-#               get_chkpt_num
+#                 get_dir_num
 # ============================================
-def get_chkpt_num(outputDir: str) -> int:
+def get_dir_num(outputDir: str, base: str) -> int:
     if not os.path.isdir(outputDir):
         return -1
-    chkpts = []
+    dirs = []
     for c in os.listdir(outputDir):
-        if c.startswith("checkpoint") and os.path.isdir(
+        if c.startswith(f"{base}") and os.path.isdir(
             os.path.join(outputDir, c)
         ):
-            chkpts.append(c)
-    if len(chkpts) == 0:
+            dirs.append(c)
+    if len(dirs) == 0:
         return -1
-    chkptNums = [int(c.split("_")[1]) for c in chkpts]
-    chkptNums = sorted(chkptNums, reverse=True)
-    return chkptNums[0]
+    dirNums = [int(c.split("_")[1]) for c in dirs]
+    dirNums = sorted(dirNums, reverse=True)
+    return dirNums[0]
 
 
 # ============================================

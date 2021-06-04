@@ -16,6 +16,7 @@ from .base_metric import BaseMetric
 class CPUPercent(BaseMetric):
 
     __name__ = "CPUPercent"
+    when = "episode_end"
 
     # -----
     # constructor
@@ -41,3 +42,10 @@ class CPUPercent(BaseMetric):
     def save(self, outputDir: str) -> None:
         with open(os.path.join(outputDir, "cpu_percent.yaml"), "w") as fd:
             yaml.safe_dump(self.cpuPercent, fd)
+
+    # -----
+    # values
+    # -----
+    @property
+    def values(self) -> dict:
+        return self.cpuPercent

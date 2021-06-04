@@ -1,4 +1,5 @@
 import os
+from typing import List
 from typing import Union
 
 import yaml
@@ -15,6 +16,7 @@ from .base_metric import BaseMetric
 class EpisodeReward(BaseMetric):
 
     __name__ = "EpisodeReward"
+    when = "episode_end"
 
     # -----
     # constructor
@@ -40,3 +42,10 @@ class EpisodeReward(BaseMetric):
     def save(self, outputDir) -> None:
         with open(os.path.join(outputDir, "episode_rewards.yaml"), "w") as fd:
             yaml.safe_dump(self.episodeRewards, fd)
+
+    # -----
+    # values
+    # -----
+    @property
+    def values(self) -> List:
+        return self.episodeRewards

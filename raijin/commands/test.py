@@ -8,6 +8,7 @@ import torch
 from raijin.io.read import read_parameter_file
 from raijin.io.write import display_banner
 from raijin.metrics.metric_list import MetricList
+from raijin.utilities.io_utilities import get_numbered_dir
 from raijin.utilities.managers import get_nets
 from raijin.utilities.register import registry
 
@@ -46,10 +47,10 @@ class TestCommand(Command):
     # _setup
     # -----
     def _setup(self) -> None:
-        path = self.argument("path")
-        self.params = read_parameter_file(os.path.join(path, "params.yaml"))
+        self.path = self.argument("path")
+        self.params = read_parameter_file(os.path.join(self.path, "params.yaml"))
         # Load the trained network parameters from the final model file
-        modelStateDict = torch.load(os.path.join(path, "model.pt"))
+        modelStateDict = torch.load(os.path.join(self.path, "model.pt"))
         self._get_proctor(modelStateDict)
         self._get_progress_bar(self.proctor.nEpisodes)
 
@@ -64,39 +65,41 @@ class TestCommand(Command):
         if "Deterministic" in self.params.env.name:
             self.proctor.nEpisodes = 1
         for self.proctor.episode in range(self.proctor.nEpisodes):
-            self.proctor.step_start()
+            self.proctor.episode_start()
             self.proctor.test_episode()
             msg = f"<info>Episode Reward</info>: {self.proctor.episodeReward}"
             self.progBar.set_message(msg)
-            self.proctor.step_end()
+            self.proctor.episode_end()
             self.progBar.advance()
-        self.progBar.finish()
         self.proctor.post_test()
+        self.progBar.finish()
 
     # -----
     # _cleanup
     # -----
     def _cleanup(self) -> None:
-        maxReward = np.max(self.proctor.metrics["episodeRewards"])
-        avgReward = np.mean(self.proctor.metrics["episodeRewards"])
-        stdDev = np.std(self.proctor.metrics["episodeRewards"])
-        self.line(f"\t<info>Max score</info>: {maxReward}")
-        self.line(f"\t<info>Avg. score</info>: {avgReward}")
-        self.line(f"\t<info>Std. Dev</info>: {stdDev}")
+        # Print metrics to stdout
+        episodeRewards = self.proctor.metrics.get("EpisodeReward")
+        self.line(f"\t<info>Max score</info>: {np.max(episodeRewards)}")
+        self.line(f"\t<info>Avg. score</info>: {np.mean(episodeRewards)}")
+        self.line(f"\t<info>Std. Dev</info>: {np.std(episodeRewards)}")
+        # Save metrics
+        self.proctor.metrics.save(get_numbered_dir(self.path, "evaluation"))
 
     # -----
     # _get_proctor
     # -----
     def _get_proctor(self, modelStateDict: dict) -> None:
+        device = self.params.device.name
         env = gym.make(self.params.env.name)
         pipeline = registry[self.params.pipeline.name](self.params.pipeline)
         agent = registry[self.params.agent.name](
-            env, pipeline, self.params.agent
+            env, pipeline, self.params.agent, device
         )
         nets = get_nets(self.params.nets, pipeline.traceLen, env.action_space.n)
         metrics = MetricList([registry[m]() for m in self.params.metrics])
         self.proctor = registry[self.params.proctor.name](
-            agent, nets, modelStateDict, self.params.proctor, metrics
+            agent, nets, modelStateDict, self.params.proctor, device, metrics
         )
 
     # -----

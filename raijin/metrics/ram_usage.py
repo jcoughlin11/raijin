@@ -16,6 +16,7 @@ from .base_metric import BaseMetric
 class RAMUsage(BaseMetric):
 
     __name__ = "RAMUsage"
+    when = "episode_end"
 
     # -----
     # constructor
@@ -41,3 +42,10 @@ class RAMUsage(BaseMetric):
     def save(self, outputDir: str) -> None:
         with open(os.path.join(outputDir, "ram_usage.yaml"), "w") as fd:
             yaml.safe_dump(self.ramUsage, fd)
+
+    # -----
+    # values
+    # -----
+    @property
+    def values(self) -> dict:
+        return self.ramUsage

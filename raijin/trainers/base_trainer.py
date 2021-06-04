@@ -9,6 +9,7 @@ import torch
 
 from raijin.agents import base_agent as ba
 from raijin.memory import base_memory as bm
+from raijin.metrics import metric_list as ml
 from raijin.utilities.register import register_object
 
 
@@ -34,7 +35,7 @@ class BaseTrainer(ABC):
         memory: "bm.BaseMemory",
         device: str,
         params: DictConfig,
-        metrics
+        metrics: "ml.MetricList"
     ) -> None:
         self.agent = agent
         self.memory = memory
@@ -98,7 +99,8 @@ class BaseTrainer(ABC):
         """
         Called before the start of training.
         """
-        pass
+        self._pre_populate()
+        self.metrics.reset()
 
     # -----
     # episode_start
@@ -107,7 +109,7 @@ class BaseTrainer(ABC):
         """
         Called at the start of each episode.
         """
-        pass
+        self.metrics.update(self, "episode_start")
 
     # -----
     # episode_end
@@ -116,7 +118,9 @@ class BaseTrainer(ABC):
         """
         Called at the end of each episode.
         """
-        pass
+        self.episodeOver = False
+        self.metrics.update(self, "episode_end")
+        self.episodeReward = 0.0
 
     # -----
     # step_start
@@ -125,7 +129,7 @@ class BaseTrainer(ABC):
         """
         Called at the start of each training step. 
         """
-        pass
+        self.metrics.update(self, "step_start")
 
     # -----
     # step_end
@@ -134,7 +138,7 @@ class BaseTrainer(ABC):
         """
         Called at the end of each training step. 
         """
-        pass
+        self.metrics.update(self, "step_end")
 
     # -----
     # post_train

@@ -44,3 +44,11 @@ class BaseMetric(ABC):
     @abstractmethod
     def save(self) -> None:
         pass
+
+    # -----
+    # values
+    # -----
+    @property
+    @abstractmethod
+    def values(self):
+        pass

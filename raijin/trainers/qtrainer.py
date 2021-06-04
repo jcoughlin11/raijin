@@ -6,6 +6,7 @@ import torch
 
 from raijin.agents import base_agent as ba
 from raijin.memory import base_memory as bm
+from raijin.metrics import metric_list as ml
 
 from .base_trainer import BaseTrainer
 
@@ -34,7 +35,7 @@ class QTrainer(BaseTrainer):
         optimizers: List,
         params: DictConfig,
         device: str,
-        metrics
+        metrics: "ml.MetricList"
     ) -> None:
         super().__init__(agent, memory, device, params, metrics)
         self.loss_function = lossFunctions[0]
@@ -45,20 +46,15 @@ class QTrainer(BaseTrainer):
         self.net.train()
 
     # -----
-    # pre_train
-    # -----
-    def pre_train(self) -> None:
-        self._pre_populate()
-        self.metrics.reset()
-
-    # -----
     # training_step
     # -----
     def training_step(self, actionChoiceType: str) -> None:
+        self.step_start()
         experience = self.agent.step(actionChoiceType, self.net)
         self.episodeReward += experience.reward
         self.memory.add(experience)
         self.episodeOver = experience.done
+        self.step_end()
 
     # -----
     # train_episode
@@ -72,14 +68,6 @@ class QTrainer(BaseTrainer):
             self.memory.update(absErrors)
             if self.episodeOver:
                 break
-
-    # -----
-    # episode_end
-    # -----
-    def episode_end(self) -> None:
-        self.episodeOver = False
-        self.metrics.update(self)
-        self.episodeReward = 0.0
 
     # -----
     # learn
