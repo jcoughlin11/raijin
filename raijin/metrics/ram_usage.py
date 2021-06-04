@@ -1,4 +1,5 @@
 import os
+from typing import Union
 
 import psutil
 import yaml
@@ -32,7 +33,7 @@ class RAMUsage(BaseMetric):
     # update
     # -----
     def update(self, mgr: Union["bp.BaseProctor", "bt.BaseTrainer"]) -> None:
-        self.ramUsage[f"mgr.episode"] = psutil.virtual_memory()[2]
+        self.ramUsage[f"{mgr.episode}"] = psutil.virtual_memory()[2]
 
     # -----
     # save

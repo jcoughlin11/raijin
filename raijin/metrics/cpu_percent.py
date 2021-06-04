@@ -1,4 +1,5 @@
 import os
+from typing import Union
 
 import psutil
 import yaml
@@ -32,7 +33,7 @@ class CPUPercent(BaseMetric):
     # update
     # -----
     def update(self, mgr: Union["bp.BaseProctor", "bt.BaseTrainer"]) -> None:
-        self.cpuPercent[f"mgr.episode"] = psutil.cpu_percent(0.25)
+        self.cpuPercent[f"{mgr.episode}"] = psutil.cpu_percent(0.25)
 
     # -----
     # save
