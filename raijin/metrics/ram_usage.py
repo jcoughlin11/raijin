@@ -1,6 +1,6 @@
 import os
-from typing import Union
 
+import psutil
 import yaml
 
 from raijin.proctors import base_proctor as bp
@@ -10,33 +10,33 @@ from .base_metric import BaseMetric
 
 
 # ============================================
-#               EpisodeReward
+#                   RAMUsage 
 # ============================================
-class EpisodeReward(BaseMetric):
+class RAMUsage(BaseMetric):
 
-    __name__ = "EpisodeReward"
+    __name__ = "RAMUsage"
 
     # -----
     # constructor
     # -----
-    def __init__(self) -> None:
-        self.episodeRewards = []
+    def __init__(self):
+        self.ramUsage = {} 
 
     # -----
     # reset
     # -----
     def reset(self) -> None:
-        self.episodeRewards = []
+        self.ramUsage = {} 
 
     # -----
     # update
     # -----
     def update(self, mgr: Union["bp.BaseProctor", "bt.BaseTrainer"]) -> None:
-        self.episodeRewards.append(mgr.episodeReward)
+        self.ramUsage[f"mgr.episode"] = psutil.virtual_memory()[2]
 
     # -----
     # save
     # -----
-    def save(self, outputDir) -> None:
-        with open(os.path.join(outputDir, "episode_rewards.yaml"), "w") as fd:
-            yaml.safe_dump(self.episodeRewards, fd)
+    def save(self, outputDir: str) -> None:
+        with open(os.path.join(outputDir, "ram_usage.yaml"), "w") as fd:
+            yaml.safe_dump(self.ramUsage, fd)

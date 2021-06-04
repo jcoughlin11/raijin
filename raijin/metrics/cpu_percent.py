@@ -1,6 +1,6 @@
 import os
-from typing import Union
 
+import psutil
 import yaml
 
 from raijin.proctors import base_proctor as bp
@@ -10,33 +10,33 @@ from .base_metric import BaseMetric
 
 
 # ============================================
-#               EpisodeReward
+#                  CPUPercent
 # ============================================
-class EpisodeReward(BaseMetric):
+class CPUPercent(BaseMetric):
 
-    __name__ = "EpisodeReward"
+    __name__ = "CPUPercent"
 
     # -----
     # constructor
     # -----
-    def __init__(self) -> None:
-        self.episodeRewards = []
+    def __init__(self):
+        self.cpuPercent = {} 
 
     # -----
     # reset
     # -----
     def reset(self) -> None:
-        self.episodeRewards = []
+        self.cpuPercent = {} 
 
     # -----
     # update
     # -----
     def update(self, mgr: Union["bp.BaseProctor", "bt.BaseTrainer"]) -> None:
-        self.episodeRewards.append(mgr.episodeReward)
+        self.cpuPercent[f"mgr.episode"] = psutil.cpu_percent(0.25)
 
     # -----
     # save
     # -----
-    def save(self, outputDir) -> None:
-        with open(os.path.join(outputDir, "episode_rewards.yaml"), "w") as fd:
-            yaml.safe_dump(self.episodeRewards, fd)
+    def save(self, outputDir: str) -> None:
+        with open(os.path.join(outputDir, "cpu_percent.yaml"), "w") as fd:
+            yaml.safe_dump(self.cpuPercent, fd)

@@ -14,6 +14,7 @@ from raijin.utilities.managers import check_device
 from raijin.utilities.managers import get_loss_functions
 from raijin.utilities.managers import get_nets
 from raijin.utilities.managers import get_optimizers
+from raijin.utilities.performance import get_performance_stats
 from raijin.utilities.register import registry
 
 
@@ -80,8 +81,12 @@ class TrainCommand(Command):
             self.trainer.episode_start()
             # Main body of training loop
             self.trainer.train_episode()
+            msg = ""
+            performanceStats = get_performance_stats(self.params.io.outputDir)
+            for statName, statValue in performanceStats.items():
+                msg += f"\n\t<info>{statName:<14}</info> : {statValue}%"
             s = "Episode Reward"
-            msg = f"<info>{s:<14}</info> : {self.trainer.episodeReward}"
+            msg = f"\n\t<info>{s:<14}</info> : {self.trainer.episodeReward}"
             self.progBar.set_message(msg)
             # End training step hook
             self.trainer.episode_end()
@@ -144,16 +149,18 @@ class TrainCommand(Command):
     # _get_progress_bar
     # -----
     def _get_progress_bar(self, nEpisodes: int) -> None:
+        performanceStats = get_performance_stats(self.params.io.outputDir)
         self.progBar = self.progress_bar(nEpisodes)
         s1 = "Episode"
         s2 = "Elsapsed Time"
         formatStr = f"\t<info>{s1:<14}</info> : %current%/%max%"
         formatStr += f"\n\t<info>{s2:<14}</info> : %elapsed%"
         formatStr += "\n\t%message%"
-        self.progBar.set_format(formatStr)
+        for statName, statValue in performanceStats.items():
+            formatStr += f"\n\t<info>{statName:<14}</info> : {statValue}%"
         s = "Episode Reward"
-        msg = f"<info>{s:<14}</info> : {0.0}"
-        self.progBar.set_message(msg)
+        formatStr += f"\n\t<info>{s:<14}</info> : {0.0}"
+        self.progBar.set_format(formatStr)
 
     # -----
     # _print_params
